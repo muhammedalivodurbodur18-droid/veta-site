@@ -6,7 +6,18 @@
       "id": "online-multiplayer-cost",
       "title": "Online multiplayer multiplies work for small teams",
       "type": "pattern",
-      "tags": ["multiplayer", "online", "co-op", "coop", "pvp", "netcode", "lobby", "matchmaking", "çok oyunculu", "eşli"],
+      "tags": [
+        "multiplayer",
+        "online",
+        "co-op",
+        "coop",
+        "pvp",
+        "netcode",
+        "lobby",
+        "matchmaking",
+        "çok oyunculu",
+        "eşli"
+      ],
       "summary": "Online play touches almost every system: movement sync, enemy state, saves, UI, testing with several machines, and support after launch.",
       "guidance": [
         "Ask whether the core loop is fun in single-player or local co-op first.",
@@ -21,7 +32,15 @@
       "id": "open-world-content-trap",
       "title": "Open worlds are a content problem, not a map problem",
       "type": "pattern",
-      "tags": ["open world", "open-world", "sandbox", "huge map", "exploration", "açık dünya", "keşif"],
+      "tags": [
+        "open world",
+        "open-world",
+        "sandbox",
+        "huge map",
+        "exploration",
+        "açık dünya",
+        "keşif"
+      ],
       "summary": "A big map is cheap to make empty and expensive to make interesting. Every area needs things to do, art to fill it and testing.",
       "guidance": [
         "Prefer a few dense, hand-made zones over one large sparse map.",
@@ -35,7 +54,16 @@
       "id": "procedural-templates-first",
       "title": "Procedural levels: start from hand-made templates",
       "type": "pattern",
-      "tags": ["procedural", "roguelike", "roguelite", "random", "generation", "rooms", "prosedürel", "rastgele"],
+      "tags": [
+        "procedural",
+        "roguelike",
+        "roguelite",
+        "random",
+        "generation",
+        "rooms",
+        "prosedürel",
+        "rastgele"
+      ],
       "summary": "Fully generated levels are hard to make fun and hard to debug. Shuffling hand-made rooms or chunks gives variety with control.",
       "guidance": [
         "Build 10-20 hand-made rooms and randomize their order and contents first.",
@@ -49,7 +77,20 @@
       "id": "content-multiplies-art",
       "title": "Content counts multiply the art workload",
       "type": "pattern",
-      "tags": ["characters", "playable", "biomes", "bosses", "animation", "art", "artist", "assets", "karakter", "biyom", "animasyon", "sanatçı"],
+      "tags": [
+        "characters",
+        "playable",
+        "biomes",
+        "bosses",
+        "animation",
+        "art",
+        "artist",
+        "assets",
+        "karakter",
+        "biyom",
+        "animasyon",
+        "sanatçı"
+      ],
       "summary": "Each extra character, biome or boss is not one task: it brings models or sprites, animations, effects, sounds and balancing.",
       "guidance": [
         "Multiply content counts by the assets each one needs before estimating.",
@@ -63,7 +104,16 @@
       "id": "first-playable",
       "title": "Define the first playable before anything else",
       "type": "checklist",
-      "tags": ["first playable", "prototype", "vertical slice", "milestone", "demo", "prototip", "ilk oynanabilir", "dikey dilim"],
+      "tags": [
+        "first playable",
+        "prototype",
+        "vertical slice",
+        "milestone",
+        "demo",
+        "prototip",
+        "ilk oynanabilir",
+        "dikey dilim"
+      ],
       "summary": "The first playable is the smallest build where a stranger can play the core loop start to finish once.",
       "guidance": [
         "List only what the core loop needs: control, one goal, one obstacle, a win and a fail state.",
@@ -77,7 +127,17 @@
       "id": "estimate-buffer",
       "title": "First estimates are optimistic",
       "type": "estimate",
-      "tags": ["estimate", "deadline", "timeline", "schedule", "release date", "tahmin", "takvim", "çıkış tarihi", "süre"],
+      "tags": [
+        "estimate",
+        "deadline",
+        "timeline",
+        "schedule",
+        "release date",
+        "tahmin",
+        "takvim",
+        "çıkış tarihi",
+        "süre"
+      ],
       "summary": "Task estimates usually leave out integration, bugs, polish and the time between tasks. First projects tend to underestimate the most.",
       "guidance": [
         "Keep a visible buffer instead of padding every task silently.",
@@ -91,7 +151,20 @@
       "id": "polish-tail",
       "title": "Reserve the end of the schedule for fixing, not adding",
       "type": "checklist",
-      "tags": ["polish", "bug", "bugs", "qa", "testing", "launch", "release", "content freeze", "cila", "hata", "test", "içerik dondurma"],
+      "tags": [
+        "polish",
+        "bug",
+        "bugs",
+        "qa",
+        "testing",
+        "launch",
+        "release",
+        "content freeze",
+        "cila",
+        "hata",
+        "test",
+        "içerik dondurma"
+      ],
       "summary": "The last stretch before launch fills up with bugs, platform requirements, store assets and feedback fixes.",
       "guidance": [
         "Set a content freeze date well before launch; after it, only fixes and polish.",
@@ -105,7 +178,16 @@
       "id": "playtest-feature-creep",
       "title": "Playtest feedback is a common source of scope creep",
       "type": "pattern",
-      "tags": ["playtest", "feedback", "testers", "feature request", "players want", "geri bildirim", "oyun testi", "istek"],
+      "tags": [
+        "playtest",
+        "feedback",
+        "testers",
+        "feature request",
+        "players want",
+        "geri bildirim",
+        "oyun testi",
+        "istek"
+      ],
       "summary": "Testers suggest features; the underlying problem is often smaller than the suggestion.",
       "guidance": [
         "Ask what problem the suggestion solves, then look for the cheapest fix.",
@@ -119,7 +201,15 @@
       "id": "solo-dev-scope",
       "title": "Solo developers: one core mechanic, done well",
       "type": "pattern",
-      "tags": ["solo", "alone", "one developer", "by myself", "tek kişi", "yalnız", "solo dev"],
+      "tags": [
+        "solo",
+        "alone",
+        "one developer",
+        "by myself",
+        "tek kişi",
+        "yalnız",
+        "solo dev"
+      ],
       "summary": "A solo developer is also the artist, tester, marketer and support team, so production time is a fraction of total time.",
       "guidance": [
         "Pick one mechanic the game is about and cut systems that do not feed it.",
@@ -133,7 +223,20 @@
       "id": "rage-platformer-fairness",
       "title": "Rage and precision platformers must feel fair",
       "type": "genre",
-      "tags": ["rage", "precision", "platformer", "fall", "falling", "difficult", "hard", "climb", "öfke", "düşme", "zor", "platform"],
+      "tags": [
+        "rage",
+        "precision",
+        "platformer",
+        "fall",
+        "falling",
+        "difficult",
+        "hard",
+        "climb",
+        "öfke",
+        "düşme",
+        "zor",
+        "platform"
+      ],
       "summary": "Players accept punishment when they understand why they failed. Unclear hitboxes, camera problems or random effects make frustration feel unfair.",
       "guidance": [
         "Make the cause of every fall readable on screen.",
@@ -148,7 +251,19 @@
       "id": "narrative-branching",
       "title": "Branching stories grow faster than you expect",
       "type": "genre",
-      "tags": ["narrative", "story", "dialogue", "choices", "branching", "endings", "visual novel", "hikaye", "diyalog", "seçim", "son"],
+      "tags": [
+        "narrative",
+        "story",
+        "dialogue",
+        "choices",
+        "branching",
+        "endings",
+        "visual novel",
+        "hikaye",
+        "diyalog",
+        "seçim",
+        "son"
+      ],
       "summary": "Every choice that changes the story multiplies writing, testing and art. Most narrative games branch and then bring paths back together.",
       "guidance": [
         "Use branch-and-bottleneck: let choices diverge, then reconverge at key scenes.",
@@ -162,7 +277,19 @@
       "id": "cozy-sim-depth",
       "title": "Cozy sims: depth of a few systems beats many shallow ones",
       "type": "genre",
-      "tags": ["cozy", "farming", "life sim", "villagers", "seasons", "crafting", "decoration", "çiftlik", "köylü", "mevsim", "dekorasyon"],
+      "tags": [
+        "cozy",
+        "farming",
+        "life sim",
+        "villagers",
+        "seasons",
+        "crafting",
+        "decoration",
+        "çiftlik",
+        "köylü",
+        "mevsim",
+        "dekorasyon"
+      ],
       "summary": "Cozy games live on routine and attachment. Many half-built systems feel empty; a few rich ones feel alive.",
       "guidance": [
         "Pick the 2-3 daily activities the game is about and make them satisfying.",
@@ -176,7 +303,18 @@
       "id": "store-page-early",
       "title": "Put the store page up long before launch",
       "type": "checklist",
-      "tags": ["steam", "store page", "wishlist", "wishlists", "marketing", "trailer", "launch", "mağaza", "pazarlama", "fragman"],
+      "tags": [
+        "steam",
+        "store page",
+        "wishlist",
+        "wishlists",
+        "marketing",
+        "trailer",
+        "launch",
+        "mağaza",
+        "pazarlama",
+        "fragman"
+      ],
       "summary": "Store pages collect interest over time; a page that goes live just before launch has little to show on day one.",
       "guidance": [
         "Prepare capsule art, screenshots, a short trailer and a clear one-line pitch.",
@@ -190,7 +328,17 @@
       "id": "localization-ready",
       "title": "Make text ready for translation early",
       "type": "checklist",
-      "tags": ["localization", "translation", "languages", "turkish", "english", "strings", "çeviri", "dil", "yerelleştirme"],
+      "tags": [
+        "localization",
+        "translation",
+        "languages",
+        "turkish",
+        "english",
+        "strings",
+        "çeviri",
+        "dil",
+        "yerelleştirme"
+      ],
       "summary": "Retrofitting translation is painful when text is hard-coded or baked into images.",
       "guidance": [
         "Keep all player-facing text in string tables from the start.",
@@ -204,7 +352,18 @@
       "id": "cut-whole-features",
       "title": "When cutting, remove whole features, not quality",
       "type": "pattern",
-      "tags": ["cut", "cuts", "scope", "too much", "behind schedule", "late", "kes", "kesinti", "gecikme", "yetişmiyor"],
+      "tags": [
+        "cut",
+        "cuts",
+        "scope",
+        "too much",
+        "behind schedule",
+        "late",
+        "kes",
+        "kesinti",
+        "gecikme",
+        "yetişmiyor"
+      ],
       "summary": "Trimming every feature a little leaves a game where nothing feels finished. Removing a whole feature keeps the rest polished.",
       "guidance": [
         "Rank features by how much they serve the core loop; cut from the bottom.",
@@ -213,6 +372,111 @@
       ],
       "source": "heuristic",
       "updated": "2026-10-09"
+    },
+    {
+      "id": "show-dont-tell-feedback",
+      "title": "Make effects felt, not read",
+      "type": "pattern",
+      "tags": [
+        "feedback",
+        "juice",
+        "feel",
+        "effect",
+        "warning",
+        "text",
+        "ui",
+        "screen shake",
+        "vignette",
+        "his",
+        "hissettir",
+        "efekt",
+        "uyarı",
+        "yazı"
+      ],
+      "summary": "Players skim or ignore on-screen text during action. An effect announced with text is understood but not felt; the same effect shown through camera, screen, character and sound is both.",
+      "guidance": [
+        "Replace text warnings with camera, screen effects, character reactions and sound.",
+        "Test it: can a player tell which effect started without any text?",
+        "Keep an optional icon for accessibility instead of a text banner."
+      ],
+      "source": "heuristic (ANGRY playtest, Oct 2026)",
+      "updated": "2026-10-10"
+    },
+    {
+      "id": "telegraph-then-hit",
+      "title": "Telegraph, then hit",
+      "type": "pattern",
+      "tags": [
+        "telegraph",
+        "warning",
+        "chaos",
+        "difficulty",
+        "fair",
+        "unfair",
+        "punish",
+        "effect",
+        "uyarı",
+        "adil",
+        "haksız"
+      ],
+      "summary": "Sudden changes feel random and cheap. A short build-up before an effect lets the player brace, and makes the change feel deserved.",
+      "guidance": [
+        "Give each disruptive effect a short, consistent build-up (pulse, rumble, rising shake).",
+        "One shared telegraph for all effects is enough; make each effect distinct by its own sound and visual.",
+        "Ask testers: did it feel like a fair consequence or a random punishment?"
+      ],
+      "source": "heuristic (ANGRY playtest and Veta producer review, Oct 2026)",
+      "updated": "2026-10-10"
+    },
+    {
+      "id": "jump-tap-and-hold",
+      "title": "A quick tap must still give a useful jump",
+      "type": "genre",
+      "tags": [
+        "jump",
+        "jumping",
+        "platformer",
+        "controls",
+        "variable jump",
+        "heavy",
+        "floaty",
+        "zıplama",
+        "ağır",
+        "kontrol"
+      ],
+      "summary": "Variable jump height is good, but if releasing early cuts too much, tapping feels broken and the jump feels heavy.",
+      "guidance": [
+        "Only allow the jump cut after a short minimum time.",
+        "Keep the cut gentle so a tap is a smaller but still useful jump.",
+        "Add coyote time and a jump buffer so near-misses on input feel forgiving."
+      ],
+      "source": "heuristic (ANGRY playtest, Oct 2026)",
+      "updated": "2026-10-10"
+    },
+    {
+      "id": "3d-platformer-readability",
+      "title": "3D platformers need a landing shadow and a calm camera",
+      "type": "genre",
+      "tags": [
+        "3d",
+        "third person",
+        "camera",
+        "shadow",
+        "landing",
+        "platformer",
+        "depth",
+        "kamera",
+        "gölge",
+        "3d platform"
+      ],
+      "summary": "Judging depth in 3D is hard. Without a shadow under the character and a camera that follows on its own, players fight the camera instead of the level.",
+      "guidance": [
+        "Put a blob shadow directly under the character at all times.",
+        "Let the camera recenter behind the player after a moment without mouse input.",
+        "Limit the vertical camera angle and keep the camera from clipping into geometry."
+      ],
+      "source": "heuristic (ANGRY playtest, Oct 2026)",
+      "updated": "2026-10-10"
     }
   ]
 }
