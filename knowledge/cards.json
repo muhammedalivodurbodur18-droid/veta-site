@@ -477,6 +477,61 @@
       ],
       "source": "heuristic (ANGRY playtest, Oct 2026)",
       "updated": "2026-10-10"
+    },
+    {
+      "id": "feel-cheap-content-expensive",
+      "title": "Feel effects are cheap; new content is expensive",
+      "type": "estimate",
+      "tags": [
+        "post-processing",
+        "post processing",
+        "shader",
+        "camera shake",
+        "vfx",
+        "effects",
+        "juice",
+        "screen effect",
+        "cinemachine",
+        "urp",
+        "volume",
+        "particles",
+        "efekt"
+      ],
+      "summary": "Screen effects, camera moves and simple particles reuse the same tools and assets, so each one is usually small work. New characters, levels, animations and voiced lines each need their own assets and are where time goes.",
+      "guidance": [
+        "Do not cut feel effects to save time before checking whether they need new assets.",
+        "When estimating, separate 'tuning and post-processing' from 'new assets'.",
+        "If code is written with AI help, logic tasks shrink most; tuning, level design, audio and writing shrink least."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-10"
+    },
+    {
+      "id": "difficulty-escape-valve",
+      "title": "Every punishing system needs an escape valve",
+      "type": "pattern",
+      "tags": [
+        "rage",
+        "difficulty",
+        "punish",
+        "feedback loop",
+        "stuck",
+        "death spiral",
+        "meter",
+        "escalation",
+        "frustration",
+        "öfke",
+        "zorluk",
+        "sıkışma"
+      ],
+      "summary": "Systems that make the game harder after failure can spiral: failing makes the game harder, which causes more failure. Without a way out, it stops feeling fair.",
+      "guidance": [
+        "Give the player a reliable way to lower the pressure through play (recovering lost ground, a calm zone, a reset point).",
+        "Check the worst case: what happens after three failures in a row?",
+        "Introduce escalation steps one at a time so each is understood before the next arrives."
+      ],
+      "source": "heuristic (ANGRY rage design review, Oct 2026)",
+      "updated": "2026-10-10"
     }
   ]
 }
