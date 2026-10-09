@@ -1170,7 +1170,7 @@ function sendChat(text) {
     '- If the developer is about to grow the scope, say so plainly.\n' +
     '- End with exactly one concrete next step for this week.\n' +
     '- Reply in the language the developer writes in. Format: short paragraphs, "-" bullets, **bold** for key terms. No tables, no headings longer than 4 words.\n' +
-    (STUDIO && (p.milestones || []).length ? '- DEADLINE CHECK below is computed by code. Quote its numbers; never recount days. A task without a gate is not due before that milestone. Plan the friend playtest or any review last before its gate.\n' : '') +
+    (STUDIO && (p.milestones || []).length ? '- DEADLINE CHECK below is computed by code. Quote its numbers; never recount days. Do not calculate any new date or day count yourself (no adding or subtracting days): use only the dates and counts given in DEADLINE CHECK and STUDIO MEMORY. If you need another date, name it and suggest adding it as a milestone. A task without a gate is not due before that milestone. Plan the friend playtest or any review last before its gate.\n' : '') +
     (STUDIO && (p.memory || []).length ? '- STUDIO MEMORY below holds the developer\'s confirmed facts, numbers and playtest notes. Prefer them over the GDD, quote their numbers exactly, and follow its "rule" notes.\n' : '') +
     '\n' + projectContext(p, { q: text, gddMax: STUDIO ? 5000 : 6000 });
   var used = pickCards(text, p.gdd, 3);
