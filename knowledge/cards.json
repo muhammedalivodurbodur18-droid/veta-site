@@ -532,6 +532,35 @@
       ],
       "source": "heuristic (ANGRY rage design review, Oct 2026)",
       "updated": "2026-10-10"
+    },
+    {
+      "id": "steam-release-rules",
+      "title": "Steam release rules set hard dates before launch",
+      "type": "checklist",
+      "tags": [
+        "steam",
+        "launch",
+        "release",
+        "release date",
+        "wishlist",
+        "wishlists",
+        "store page",
+        "coming soon",
+        "çıkış",
+        "yayın",
+        "mağaza",
+        "steam sayfası",
+        "çıkış tarihi"
+      ],
+      "summary": "On Steam, a new developer cannot launch whenever the game is ready: the app fee, the Coming Soon page and two reviews each need lead time.",
+      "guidance": [
+        "Pay the Steam Direct fee ($100 per game) early: Steamworks docs describe a waiting period between paying and releasing for your first titles (30 days on the Steam Direct page, 21 days on the onboarding page). Plan for 30.",
+        "A new game needs a Coming Soon page live for at least two weeks before release, and Valve asks for the store page to be submitted for review at least 7 business days before it should go live.",
+        "The store page and the release build each go through a review that takes about 1-5 days, so work backwards from the launch date and add these steps to the plan.",
+        "Wishlists build up while the page is live, so a page that goes up only weeks before launch has little to show on day one."
+      ],
+      "source": "Steamworks documentation: partner.steamgames.com/steamdirect, /doc/gettingstarted/onboarding, /doc/store/coming_soon (checked 2026-10-10)",
+      "updated": "2026-10-10"
     }
   ]
 }
