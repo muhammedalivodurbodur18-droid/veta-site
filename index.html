@@ -3,8 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Veta — Game Studio OS</title>
-<meta name="description" content="Veta is the Game Studio OS that turns your GDD into a realistic plan and warns you when scope creep threatens your release date.">
+<title>Veta — Scope creep and game planning tool for indie developers</title>
+<meta name="description" content="Veta is an AI production planner for indie game developers. It scores your game design, breaks it into estimated tasks, forecasts your release date and warns you before scope creep costs you weeks.">
+<link rel="canonical" href="https://veta-site.netlify.app/">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#09080D">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Veta">
+<meta property="og:url" content="https://veta-site.netlify.app/">
+<meta property="og:title" content="Veta — Plan the game you can actually ship">
+<meta property="og:description" content="An AI production planner for indie game developers: GDD report card, task breakdown, release forecast and Scope Guard. Free demo, no sign-up.">
+<meta property="og:image" content="https://veta-site.netlify.app/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Veta: plan the game you can actually ship">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Veta — Plan the game you can actually ship">
+<meta name="twitter:description" content="An AI production planner for indie game developers. Free demo, no sign-up.">
+<meta name="twitter:image" content="https://veta-site.netlify.app/og.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Veta","applicationCategory":"DeveloperApplication","operatingSystem":"Web","url":"https://veta-site.netlify.app/","description":"Veta is an AI production planner for indie game developers. It scores a game design document, breaks it into estimated tasks, forecasts the release date and warns about scope creep.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","description":"Free demo during early access"}}</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&amp;family=Geist:wght@400;500;600&amp;family=Geist+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
@@ -36,7 +53,517 @@ details[open] .faq-plus{transform:rotate(45deg)}
 </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app"><!--PRERENDER-->
+<div style="background:#09080D;color:#EEEDF2;font-family:'Geist',system-ui,sans-serif;width:100%;overflow-x:clip">
+
+<!-- NAV -->
+<div style="position:sticky;top:0;z-index:50;height:0">
+<div style="max-width:1200px;margin:0 auto;padding:14px 24px 0;box-sizing:border-box">
+<div style="background:rgba(14,13,19,0.78);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid #22202B;border-radius:14px;padding:8px 8px 8px 18px;display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;justify-content:space-between" class="nav-row">
+<a href="#top" style="display:flex;align-items:center;gap:10px;color:#FFFFFF">
+<svg width="24" height="24" viewBox="0 0 44 44" aria-hidden="true"><path d="M3 7 Q9 4 12 11 L21 31 L32 7 Q34.500 2 41 3 Q36 5.500 34 11 L25 37 Q21.500 45 17 37 Z" fill="#FFFFFF"></path></svg>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:21px;letter-spacing:-0.5px;color:#FFFFFF">veta</span>
+</a>
+<div class="nav-links" style="display:flex;flex-wrap:wrap;gap:8px 26px;align-items:center;font-size:14px">
+<a class="nav-link" href="#product">Product</a>
+<a class="nav-link" href="#compare">Why Veta</a>
+<a class="nav-link" href="#pricing">Pricing</a>
+<a class="nav-link" href="#faq">FAQ</a>
+<a class="nav-link keep" href="#waitlist">Waitlist</a>
+<a href="app.html" target="_self" style="background:#EEEDF2;color:#0B0A10;padding:10px 16px;border-radius:9px;font-weight:500">Try the demo</a>
+</div>
+</div>
+</div>
+</div>
+
+<!-- HERO -->
+<div id="top" style="position:relative;overflow:hidden;border-bottom:1px solid #1A1822">
+
+<div aria-hidden="true" style="position:absolute;left:50%;top:20px;width:1180px;height:1020px;margin-left:-590px;pointer-events:none;-webkit-mask-image:radial-gradient(closest-side,#000 40%,transparent 100%);mask-image:radial-gradient(closest-side,#000 40%,transparent 100%)">
+<div style="position:absolute;left:0;top:0;right:0;bottom:0;background:radial-gradient(closest-side,rgba(108,71,255,0.30),rgba(108,71,255,0) 100%)"></div>
+<svg viewBox="-2 -2 48 50" width="1180" height="1020" preserveAspectRatio="xMidYMid meet" style="position:absolute;left:0;top:0">
+<defs>
+<linearGradient id="vsig" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#4B2BD6"></stop>
+<stop offset="0.5" stop-color="#B7A6FF"></stop>
+<stop offset="1" stop-color="#FF8AC4"></stop>
+</linearGradient>
+</defs>
+<g fill="none" stroke="url(#vsig)" stroke-width="0.12" stroke-linejoin="round">
+<path d="M3 7 Q9 4 12 11 L21 31 L32 7 Q34.500 2 41 3 Q36 5.500 34 11 L25 37 Q21.500 45 17 37 Z" opacity="0.9"></path>
+<path transform="translate(0,1.100)" d="M3 7 Q9 4 12 11 L21 31 L32 7 Q34.500 2 41 3 Q36 5.500 34 11 L25 37 Q21.500 45 17 37 Z" opacity="0.62"></path>
+<path transform="translate(0,2.200)" d="M3 7 Q9 4 12 11 L21 31 L32 7 Q34.500 2 41 3 Q36 5.500 34 11 L25 37 Q21.500 45 17 37 Z" opacity="0.42"></path>
+<path transform="translate(0,3.300)" d="M3 7 Q9 4 12 11 L21 31 L32 7 Q34.500 2 41 3 Q36 5.500 34 11 L25 37 Q21.500 45 17 37 Z" opacity="0.28"></path>
+<path transform="translate(0,4.400)" d="M3 7 Q9 4 12 11 L21 31 L32 7 Q34.500 2 41 3 Q36 5.500 34 11 L25 37 Q21.500 45 17 37 Z" opacity="0.16"></path>
+</g>
+</svg>
+</div>
+<div aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;height:520px;pointer-events:none;background:radial-gradient(ellipse 60% 70% at 50% 100%,rgba(108,71,255,0.22),rgba(9,8,13,0) 70%)"></div>
+
+<div style="position:relative;max-width:900px;margin:0 auto;padding:150px 24px 0;box-sizing:border-box;display:flex;flex-direction:column;gap:24px;align-items:center;text-align:center" class="hero-wrap">
+<div style="display:flex;align-items:center;gap:10px;font-size:13px;color:#D6D3E0;border:1px solid #3A3550;background:rgba(18,17,23,0.92);padding:6px 14px 6px 8px;border-radius:999px">
+<span style="font-family:'Geist Mono',monospace;font-size:11px;color:#0B0A10;background:#B7A6FF;padding:3px 8px;border-radius:999px;font-weight:500">NEW</span>
+Early access opens before the 2027 launch
+</div>
+<h1 style="margin:0;font-family:'Geist',sans-serif;font-weight:500;font-size:76px;line-height:1.02;letter-spacing:-3px;color:#FFFFFF">Plan the game you can actually ship</h1>
+<p class="hero-sub" style="margin:0;font-size:19px;line-height:1.6;color:#8E8A9B;max-width:620px"><strong style="color:#FFFFFF;font-weight:500">Veta is an AI production planner for indie game developers.</strong> It reads your game design, scores how ready it is to build, breaks it into estimated tasks, and warns you before scope creep costs you weeks.</p>
+<div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
+<a href="app.html" target="_self" style="background:#EEEDF2;color:#0B0A10;padding:13px 22px;border-radius:10px;font-weight:500;font-size:15px">Try the Veta demo</a>
+<a class="btn-ghost" href="#waitlist" style="padding:13px 22px;border-radius:10px;font-weight:500;font-size:15px">Join the waitlist</a>
+</div>
+</div>
+
+<!-- PRODUCT WINDOW -->
+<div id="product" style="position:relative;max-width:1200px;margin:64px auto 0;padding:0 24px 96px;box-sizing:border-box">
+<div style="background:#0E0D13;border:1px solid #26232F;border-radius:16px;overflow:hidden;box-shadow:0 40px 120px rgba(0,0,0,0.6),0 0 0 6px rgba(255,255,255,0.02)">
+
+<div style="display:flex;align-items:center;gap:14px;padding:12px 16px;border-bottom:1px solid #1E1C26;flex-wrap:wrap">
+<div style="display:flex;gap:7px"><span style="width:11px;height:11px;border-radius:99px;background:#2A2733"></span><span style="width:11px;height:11px;border-radius:99px;background:#2A2733"></span><span style="width:11px;height:11px;border-radius:99px;background:#2A2733"></span></div>
+<div style="font-family:'Geist Mono',monospace;font-size:12px;color:#8E8A9B">veta / analyzer</div>
+<div style="margin-left:auto;display:flex;gap:4px;flex-wrap:wrap">
+
+<button data-tab="report" style="font-family:'Geist',sans-serif;font-size:13px;font-weight:500;padding:7px 12px;border-radius:8px;cursor:pointer;border:1px solid #2E2A3A;background:#1C1A24;color:#FFFFFF">Report card</button>
+
+<button data-tab="tasks" style="font-family:'Geist',sans-serif;font-size:13px;font-weight:500;padding:7px 12px;border-radius:8px;cursor:pointer;border:1px solid transparent;background:transparent;color:#8E8A9B">Task breakdown</button>
+
+<button data-tab="scope" style="font-family:'Geist',sans-serif;font-size:13px;font-weight:500;padding:7px 12px;border-radius:8px;cursor:pointer;border:1px solid transparent;background:transparent;color:#8E8A9B">Scope Guard</button>
+
+</div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;text-align:left">
+
+<!-- input panel -->
+<div style="flex:1 1 340px;min-width:0;padding:24px;box-sizing:border-box;border-right:1px solid #1E1C26;display:flex;flex-direction:column;gap:16px;background:#0B0A10">
+<label for="idea-input" style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">YOUR GAME</label>
+<textarea id="idea-input" rows="7" maxlength="4000" placeholder="Describe your game: genre, core loop, key features, team size and timeline." aria-label="Describe your game" style="width:100%;box-sizing:border-box;background:#121117;border:1px solid #26232F;border-radius:10px;padding:14px;outline:0;resize:vertical;font-family:'Geist',sans-serif;font-size:15px;line-height:1.55;color:#EEEDF2">A 4-player co-op roguelike with crafting and online play. Team of 2, 12 months.</textarea>
+<a href="#product" data-analyze="1" style="display:flex;justify-content:center;background:#6C47FF;color:#FFFFFF;border-radius:10px;padding:13px 18px;font-weight:500;font-size:15px">Analyze</a>
+
+
+<div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+<div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">OR TRY A SAMPLE</div>
+<div style="display:flex;flex-wrap:wrap;gap:8px">
+
+<button data-game="0" style="font-family:'Geist',sans-serif;font-size:13px;font-weight:500;padding:7px 12px;border-radius:999px;cursor:pointer;border:1px solid #EEEDF2;background:#EEEDF2;color:#0B0A10">Co-op roguelike</button>
+
+<button data-game="1" style="font-family:'Geist',sans-serif;font-size:13px;font-weight:500;padding:7px 12px;border-radius:999px;cursor:pointer;border:1px solid #26232F;background:#121117;color:#B4B0C2">Cozy farming sim</button>
+
+<button data-game="2" style="font-family:'Geist',sans-serif;font-size:13px;font-weight:500;padding:7px 12px;border-radius:999px;cursor:pointer;border:1px solid #26232F;background:#121117;color:#B4B0C2">Open-world RPG</button>
+
+</div>
+</div>
+<a href="app.html" target="_self" style="display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid #2E2A3A;background:#121117;border-radius:10px;padding:12px 14px;color:#EEEDF2;font-size:14px;font-weight:500">Open the full demo<span style="color:#B7A6FF">Chat, tasks, Scope Guard →</span></a>
+<div style="margin-top:auto;padding-top:12px;border-top:1px solid #1E1C26;display:flex;flex-direction:column;gap:10px">
+<div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">DETECTED SYSTEMS</div>
+<div style="display:flex;flex-wrap:wrap;gap:6px">
+
+<span style="font-size:12px;color:#C9C6D4;background:#121117;border:1px solid #26232F;padding:5px 10px;border-radius:6px">Online multiplayer</span>
+
+<span style="font-size:12px;color:#C9C6D4;background:#121117;border:1px solid #26232F;padding:5px 10px;border-radius:6px">Procedural levels</span>
+
+<span style="font-size:12px;color:#C9C6D4;background:#121117;border:1px solid #26232F;padding:5px 10px;border-radius:6px">Crafting</span>
+
+</div>
+</div>
+</div>
+
+<!-- output panel -->
+<div style="flex:2 1 480px;min-width:0;padding:24px;box-sizing:border-box;display:flex;flex-direction:column;gap:20px;min-height:480px">
+<div style="font-family:'Geist Mono',monospace;font-size:11px;line-height:1.5;color:#8E8A9B">Quick rule-based estimate from the keywords in your text. The full AI analysis runs in the Veta app.</div>
+
+
+<div style="display:flex;flex-direction:column;gap:18px">
+<div style="font-size:17px;line-height:1.5;color:#FFFFFF;font-weight:500;letter-spacing:-0.2px">About 4.9 months of work in 12. Reasonable, keep an eye on new features.</div>
+<div style="display:flex;gap:12px;flex-wrap:wrap">
+<div style="flex:1 1 180px;background:#121117;border:1px solid #22202B;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px">
+<div style="font-size:13px;color:#8E8A9B">GDD quality</div>
+<div style="font-weight:500;font-size:44px;line-height:1;letter-spacing:-1.500px;color:#FFFFFF">6.5<span style="font-size:17px;color:#8E8A9B;letter-spacing:0">/10</span></div>
+<div style="height:4px;border-radius:99px;background:#22202B"><div style="width:65%;height:4px;border-radius:99px;background:#B7A6FF"></div></div>
+</div>
+<div style="flex:1 1 180px;background:#121117;border:1px solid #22202B;border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:12px">
+<div style="font-size:13px;color:#8E8A9B">Production readiness</div>
+<div style="font-weight:500;font-size:44px;line-height:1;letter-spacing:-1.500px;color:#FFFFFF">6.5<span style="font-size:17px;color:#8E8A9B;letter-spacing:0">/10</span></div>
+<div style="height:4px;border-radius:99px;background:#22202B"><div style="width:65%;height:4px;border-radius:99px;background:#FFB454"></div></div>
+</div>
+</div>
+<div style="background:#121117;border:1px solid #22202B;border-radius:12px;overflow:hidden">
+<div style="padding:12px 18px;border-bottom:1px solid #22202B;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">RISKS FOUND</div>
+
+<div style="display:flex;gap:12px;align-items:flex-start;padding:12px 18px;border-bottom:1px solid #1A1822;font-size:14px;line-height:1.5;color:#D9D6E2"><span style="width:6px;height:6px;margin-top:7px;border-radius:99px;background:#FFB454;flex:none"></span>Online multiplayer adds networking and testing work</div>
+
+</div>
+<div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:#2A2216;border:1px solid #6B5A2E;border-radius:12px;padding:14px 18px">
+<span style="font-size:14px;color:#EEEDF2">Overall scope risk</span>
+<span style="font-family:'Geist Mono',monospace;font-size:13px;font-weight:500;color:#FFD08A;letter-spacing:1px">MEDIUM</span>
+</div>
+
+<div style="background:#121117;border:1px solid #22202B;border-radius:12px;padding:14px 18px;display:flex;flex-direction:column;gap:6px">
+<span style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">CUT FIRST</span>
+<span style="font-size:14px;line-height:1.5;color:#EEEDF2">Park "Online multiplayer" (about 12 days) for after launch.</span>
+</div>
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+<button type="button" data-share="card" style="font-family:'Geist',sans-serif;font-size:14px;font-weight:500;padding:11px 16px;border-radius:10px;cursor:pointer;border:0;background:#6C47FF;color:#FFFFFF">Share report card</button>
+<button type="button" data-share="copy" style="font-family:'Geist',sans-serif;font-size:14px;font-weight:500;padding:11px 16px;border-radius:10px;cursor:pointer;border:1px solid #4A4466;background:#16141D;color:#FFFFFF">Copy summary</button>
+<span style="font-size:13px;color:#B4B0C2" role="status"></span>
+</div>
+</div>
+
+
+
+
+
+
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- WORKS WITH -->
+<div style="border-bottom:1px solid #1A1822">
+<div style="max-width:1200px;margin:0 auto;padding:36px 24px;box-sizing:border-box;display:flex;flex-wrap:wrap;gap:20px 48px;align-items:center;justify-content:space-between">
+<div style="font-size:13px;color:#8E8A9B;max-width:240px;line-height:1.5">Built to fit the tools you already use. GitHub at launch, the rest on the roadmap.</div>
+<div style="display:flex;flex-wrap:wrap;gap:16px 44px;align-items:center;font-weight:600;font-size:19px;letter-spacing:-0.300px;color:#8E8A9B">
+<span style="color:#EEEDF2">GitHub</span><span>Unity</span><span>Godot</span><span>Steam</span><span>Discord</span><span>Notion</span>
+</div>
+</div>
+</div>
+
+<!-- PROBLEM -->
+<div id="problem" style="max-width:1200px;margin:0 auto;padding:120px 24px;box-sizing:border-box;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-wrap:wrap;gap:24px 64px;align-items:flex-end;justify-content:space-between">
+<div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:18px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:1px;color:#8E8A9B">THE PROBLEM</div>
+<h2 style="margin:0;font-weight:500;font-size:48px;line-height:1.08;letter-spacing:-1.800px;color:#FFFFFF">Most indie games don't die from bad ideas. <span style="color:#6E6A7C">They die from lost time.</span></h2>
+</div>
+<p style="flex:0 1 360px;margin:0;font-size:16px;line-height:1.6;color:#8E8A9B">The same three things quietly eat months: starting without a plan, scope that keeps growing, and estimates nobody checks.</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;border:1px solid #22202B;border-radius:16px;overflow:hidden;background:#0E0D13">
+<div style="flex:1 1 300px;min-width:0;padding:32px;box-sizing:border-box;border-right:1px solid #22202B;display:flex;flex-direction:column;gap:14px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;color:#B7A6FF">01</div>
+<div style="font-weight:500;font-size:21px;letter-spacing:-0.400px;color:#FFFFFF">Starting without a plan</div>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#8E8A9B">You open the engine on day one with a vague idea. Three months later nobody remembers what the game was supposed to be.</p>
+</div>
+<div style="flex:1 1 300px;min-width:0;padding:32px;box-sizing:border-box;border-right:1px solid #22202B;display:flex;flex-direction:column;gap:14px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;color:#B7A6FF">02</div>
+<div style="font-weight:500;font-size:21px;letter-spacing:-0.400px;color:#FFFFFF">Scope that quietly doubles</div>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#8E8A9B">One small feature becomes a new system, new assets and new bugs. The release date slips and nobody saw it happen.</p>
+</div>
+<div style="flex:1 1 300px;min-width:0;padding:32px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;color:#B7A6FF">03</div>
+<div style="font-weight:500;font-size:21px;letter-spacing:-0.400px;color:#FFFFFF">Estimates that are guesses</div>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#8E8A9B">"A couple of weeks" is not a plan. Without a real breakdown, you find out how big the game is when you're already behind.</p>
+</div>
+</div>
+</div>
+
+<!-- COMPARE TABLE -->
+<div id="compare" style="background:#0B0A10;border-top:1px solid #1A1822;border-bottom:1px solid #1A1822">
+<div style="max-width:1200px;margin:0 auto;padding:120px 24px;box-sizing:border-box;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-wrap:wrap;gap:24px 64px;align-items:flex-end;justify-content:space-between">
+<div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:18px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:1px;color:#8E8A9B">WHY NOT JUST CHATGPT</div>
+<h2 style="margin:0;font-weight:500;font-size:48px;line-height:1.08;letter-spacing:-1.800px;color:#FFFFFF">A chat box answers questions. <span style="color:#6E6A7C">Veta keeps your project together.</span></h2>
+</div>
+<p style="flex:0 1 360px;margin:0;font-size:16px;line-height:1.6;color:#8E8A9B">Keep using a general AI chat for brainstorming. Veta is for what comes after: turning the idea into a plan you can hold yourself to.</p>
+</div>
+
+<div style="border:1px solid #22202B;border-radius:16px;overflow:hidden;background:#0E0D13">
+<div style="display:flex;flex-wrap:wrap;border-bottom:1px solid #22202B;background:#121117">
+<div style="flex:0 1 200px;min-width:0;padding:16px 24px;box-sizing:border-box;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B"></div>
+<div style="flex:1 1 280px;min-width:0;padding:16px 24px;box-sizing:border-box;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">A GENERAL AI CHAT</div>
+<div style="flex:1 1 280px;min-width:0;padding:16px 24px;box-sizing:border-box;font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#B7A6FF">VETA</div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;border-bottom:1px solid #1A1822">
+<div style="flex:0 1 200px;min-width:0;padding:20px 24px;box-sizing:border-box;font-size:14px;font-weight:500;color:#EEEDF2">Starting point</div>
+<div style="flex:1 1 280px;min-width:0;padding:20px 24px;box-sizing:border-box;display:flex;gap:12px;font-size:14px;line-height:1.55;color:#8E8A9B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E6A7C" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>A blank box. You decide what to ask, every single time.</div>
+<div style="flex:1 1 280px;min-width:0;padding:20px 24px;box-sizing:border-box;display:flex;gap:12px;font-size:14px;line-height:1.55;color:#EEEDF2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Your GDD goes in, the same structured report card comes out for every project.</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;border-bottom:1px solid #1A1822">
+<div style="flex:0 1 200px;min-width:0;padding:20px 24px;box-sizing:border-box;font-size:14px;font-weight:500;color:#EEEDF2">Project memory</div>
+<div style="flex:1 1 280px;min-width:0;padding:20px 24px;box-sizing:border-box;display:flex;gap:12px;font-size:14px;line-height:1.55;color:#8E8A9B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E6A7C" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>Lives in one conversation. A new chat means explaining your game again.</div>
+<div style="flex:1 1 280px;min-width:0;padding:20px 24px;box-sizing:border-box;display:flex;gap:12px;font-size:14px;line-height:1.55;color:#EEEDF2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Studio Memory keeps your decisions and history, so every answer builds on the last (Pro).</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;border-bottom:1px solid #1A1822">
+<div style="flex:0 1 200px;min-width:0;padding:20px 24px;box-sizing:border-box;font-size:14px;font-weight:500;color:#EEEDF2">Scope creep</div>
+<div style="flex:1 1 280px;min-width:0;padding:20px 24px;box-sizing:border-box;display:flex;gap:12px;font-size:14px;line-height:1.55;color:#8E8A9B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E6A7C" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>Answers what you ask. It won't tell you a new idea just doubled your scope.</div>
+<div style="flex:1 1 280px;min-width:0;padding:20px 24px;box-sizing:border-box;display:flex;gap:12px;font-size:14px;line-height:1.55;color:#EEEDF2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Scope Guard checks every new idea against your core loop and warns you first.</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;border-bottom:1px solid #1A1822">
+<div style="flex:0 1 200px;min-width:0;padding:20px 24px;box-sizing:border-box;font-size:14px;font-weight:500;color:#EEEDF2">Estimates</div>
+<div style="flex:1 1 280px;min-width:0;padding:20px 24px;box-sizing:border-box;display:flex;gap:12px;font-size:14px;line-height:1.55;color:#8E8A9B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E6A7C" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>One-off guesses that nobody checks later.</div>
+<div style="flex:1 1 280px;min-width:0;padding:20px 24px;box-sizing:border-box;display:flex;gap:12px;font-size:14px;line-height:1.55;color:#EEEDF2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>A time-estimated task board that gets more accurate as Veta learns your real pace.</div>
+</div>
+<div style="display:flex;flex-wrap:wrap">
+<div style="flex:0 1 200px;min-width:0;padding:20px 24px;box-sizing:border-box;font-size:14px;font-weight:500;color:#EEEDF2">Output</div>
+<div style="flex:1 1 280px;min-width:0;padding:20px 24px;box-sizing:border-box;display:flex;gap:12px;font-size:14px;line-height:1.55;color:#8E8A9B"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6E6A7C" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>Text you copy into a doc and organize yourself.</div>
+<div style="flex:1 1 280px;min-width:0;padding:20px 24px;box-sizing:border-box;display:flex;gap:12px;font-size:14px;line-height:1.55;color:#EEEDF2"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>A kanban board that follows your code through GitHub (Pro).</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- FEATURES -->
+<div id="features" style="max-width:1200px;margin:0 auto;padding:120px 24px;box-sizing:border-box;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-wrap:wrap;gap:24px 64px;align-items:flex-end;justify-content:space-between">
+<div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:18px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:1px;color:#8E8A9B">AT LAUNCH</div>
+<h2 style="margin:0;font-weight:500;font-size:48px;line-height:1.08;letter-spacing:-1.800px;color:#FFFFFF">Two tools that give you your time back. <span style="color:#6E6A7C">More every month.</span></h2>
+</div>
+<p style="flex:0 1 360px;margin:0;font-size:16px;line-height:1.6;color:#8E8A9B">Veta launches focused on the two things that save solo developers and small teams the most time.</p>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:16px">
+<div style="flex:1 1 480px;min-width:0;background:#0E0D13;border:1px solid #22202B;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+<div style="padding:32px 32px 0;display:flex;flex-direction:column;gap:12px">
+<div style="font-weight:500;font-size:24px;letter-spacing:-0.600px;color:#FFFFFF">Scope Guard</div>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#8E8A9B;max-width:440px">Every new idea is checked against your core loop. If it grows the scope, you see what it touches and how far it pushes your ship date, before you commit.</p>
+</div>
+<div style="margin:28px 32px 0;background:#121117;border:1px solid #26232F;border-bottom:0;border-radius:12px 12px 0 0;padding:20px;display:flex;flex-direction:column;gap:12px">
+<div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#FFB4A8">SCOPE GUARD WARNING</div>
+<div style="font-size:15px;color:#EEEDF2;font-weight:500">"Add a crafting system"</div>
+<div style="font-size:14px;line-height:1.55;color:#8E8A9B">Touches inventory, UI and save data. Not part of the core loop.</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<span style="font-size:12px;font-weight:500;color:#FFB4A8;border:1px solid #5A3434;padding:5px 10px;border-radius:7px">Delays launch +3 weeks</span>
+<span style="font-size:12px;font-weight:500;color:#C9C6D4;border:1px solid #2E2A3A;padding:5px 10px;border-radius:7px">Move to post-launch?</span>
+</div>
+</div>
+</div>
+
+<div style="flex:1 1 480px;min-width:0;background:#0E0D13;border:1px solid #22202B;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+<div style="padding:32px 32px 0;display:flex;flex-direction:column;gap:12px">
+<div style="font-weight:500;font-size:24px;letter-spacing:-0.600px;color:#FFFFFF">GDD-to-Task Breakdown</div>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#8E8A9B;max-width:440px">Drop in your GDD and get a realistic, time-estimated kanban, so you see the true size of your game before you start building.</p>
+</div>
+<div style="margin:28px 32px 0;background:#121117;border:1px solid #26232F;border-bottom:0;border-radius:12px 12px 0 0;overflow:hidden">
+<div style="display:flex;justify-content:space-between;gap:12px;padding:13px 18px;border-bottom:1px solid #1E1C26;font-size:14px;color:#EEEDF2"><span>Player movement and camera</span><span style="font-family:'Geist Mono',monospace;font-size:12px;color:#C9C6D4">3d</span></div>
+<div style="display:flex;justify-content:space-between;gap:12px;padding:13px 18px;border-bottom:1px solid #1E1C26;font-size:14px;color:#EEEDF2"><span>Enemy AI, first archetype</span><span style="font-family:'Geist Mono',monospace;font-size:12px;color:#C9C6D4">5d</span></div>
+<div style="display:flex;justify-content:space-between;gap:12px;padding:13px 18px;border-bottom:1px solid #1E1C26;font-size:14px;color:#EEEDF2"><span>Level 1 blockout</span><span style="font-family:'Geist Mono',monospace;font-size:12px;color:#C9C6D4">4d</span></div>
+<div style="display:flex;justify-content:space-between;gap:12px;padding:13px 18px;font-size:14px;color:#EEEDF2"><span>Save and load</span><span style="font-family:'Geist Mono',monospace;font-size:12px;color:#C9C6D4">2d</span></div>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-wrap:wrap;border:1px solid #22202B;border-radius:16px;overflow:hidden;background:#0E0D13">
+<div style="flex:1 1 240px;min-width:0;padding:24px 28px;box-sizing:border-box;border-right:1px solid #22202B;display:flex;flex-direction:column;gap:6px;justify-content:center">
+<div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">AFTER LAUNCH</div>
+<div style="font-weight:500;font-size:17px;color:#FFFFFF">A new release every month</div>
+</div>
+<div style="flex:3 1 520px;min-width:0;padding:24px 28px;box-sizing:border-box;display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+<span style="font-size:13px;color:#C9C6D4;border:1px solid #26232F;padding:7px 12px;border-radius:8px">Playtest Copilot</span>
+<span style="font-size:13px;color:#C9C6D4;border:1px solid #26232F;padding:7px 12px;border-radius:8px">Store page assistant</span>
+<span style="font-size:13px;color:#C9C6D4;border:1px solid #26232F;padding:7px 12px;border-radius:8px">Repro Capture</span>
+<span style="font-size:13px;color:#C9C6D4;border:1px solid #26232F;padding:7px 12px;border-radius:8px">Studio Memory</span>
+<span style="font-size:13px;color:#C9C6D4;border:1px solid #26232F;padding:7px 12px;border-radius:8px">Dependency Map</span>
+<span style="font-size:13px;color:#C9C6D4;border:1px solid #26232F;padding:7px 12px;border-radius:8px">Living Decision Log</span>
+</div>
+</div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div style="background:#0B0A10;border-top:1px solid #1A1822;border-bottom:1px solid #1A1822">
+<div style="max-width:1200px;margin:0 auto;padding:120px 24px;box-sizing:border-box;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-wrap:wrap;gap:24px 64px;align-items:flex-end;justify-content:space-between">
+<div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:18px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:1px;color:#8E8A9B">HOW IT WORKS</div>
+<h2 style="margin:0;font-weight:500;font-size:48px;line-height:1.08;letter-spacing:-1.800px;color:#FFFFFF">From idea to a plan you can trust. <span style="color:#6E6A7C">In three steps.</span></h2>
+</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;border:1px solid #22202B;border-radius:16px;overflow:hidden;background:#0E0D13">
+<div style="flex:1 1 300px;min-width:0;padding:32px;box-sizing:border-box;border-right:1px solid #22202B;display:flex;flex-direction:column;gap:14px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;color:#B7A6FF">STEP 01</div>
+<div style="font-weight:500;font-size:21px;letter-spacing:-0.400px;color:#FFFFFF">Describe your game</div>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#8E8A9B">Write your GDD in Veta or paste the one you already have.</p>
+</div>
+<div style="flex:1 1 300px;min-width:0;padding:32px;box-sizing:border-box;border-right:1px solid #22202B;display:flex;flex-direction:column;gap:14px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;color:#B7A6FF">STEP 02</div>
+<div style="font-weight:500;font-size:21px;letter-spacing:-0.400px;color:#FFFFFF">Get the honest picture</div>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#8E8A9B">A report card shows your scope risks, and a task breakdown shows how long the work really takes.</p>
+</div>
+<div style="flex:1 1 300px;min-width:0;padding:32px;box-sizing:border-box;display:flex;flex-direction:column;gap:14px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;color:#B7A6FF">STEP 03</div>
+<div style="font-weight:500;font-size:21px;letter-spacing:-0.400px;color:#FFFFFF">Build with a guard on</div>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#8E8A9B">As new ideas arrive, Scope Guard flags the ones that put your release at risk.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- DEVLOG -->
+<div id="devlog" style="max-width:1200px;margin:0 auto;padding:120px 24px;box-sizing:border-box;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-wrap:wrap;gap:24px 64px;align-items:flex-end;justify-content:space-between">
+<div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:18px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:1px;color:#8E8A9B">DEVLOG</div>
+<h2 style="margin:0;font-weight:500;font-size:48px;line-height:1.08;letter-spacing:-1.800px;color:#FFFFFF">Building in public. <span style="color:#6E6A7C">Follow along.</span></h2>
+</div>
+<p style="flex:0 1 360px;margin:0;font-size:16px;line-height:1.6;color:#8E8A9B">Veta is built by one developer, in the open. Here is what is happening, as it happens.</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:16px">
+<div style="flex:1.4 1 420px;min-width:0;background:#0E0D13;border:1px solid #22202B;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+<div style="height:240px;background:radial-gradient(ellipse 80% 90% at 50% 100%,#6C47FF,#2A1A7A 45%,#0E0D13 80%);display:flex;align-items:center;justify-content:center">
+<svg width="84" height="84" viewBox="0 0 44 44" aria-hidden="true"><path d="M3 7 Q9 4 12 11 L21 31 L32 7 Q34.500 2 41 3 Q36 5.500 34 11 L25 37 Q21.500 45 17 37 Z" fill="#FFFFFF"></path></svg>
+</div>
+<div style="padding:24px 28px 28px;display:flex;flex-direction:column;gap:10px">
+<div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">OCT 2026 · PRODUCT</div>
+<div style="font-weight:500;font-size:22px;line-height:1.25;letter-spacing:-0.500px;color:#FFFFFF">Why V1 launches with just two features</div>
+<p style="margin:0;font-size:15px;line-height:1.6;color:#8E8A9B">Scope Guard and GDD-to-Task Breakdown save time for solo developers and small teams alike. Everything else waits until real users ask for it.</p>
+</div>
+</div>
+<div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:16px">
+<div style="flex:1;background:#0E0D13;border:1px solid #22202B;border-radius:16px;padding:24px 28px;display:flex;flex-direction:column;gap:10px">
+<div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">OCT 2026 · BRAND</div>
+<div style="font-weight:500;font-size:19px;line-height:1.3;color:#FFFFFF">A new identity for Veta</div>
+<p style="margin:0;font-size:14px;line-height:1.6;color:#8E8A9B">Indigo-violet on near-black, a hand-sketched V and a plain lowercase wordmark.</p>
+</div>
+<div style="flex:1;background:#0E0D13;border:1px solid #22202B;border-radius:16px;padding:24px 28px;display:flex;flex-direction:column;gap:10px">
+<div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">OCT 2026 · ROADMAP</div>
+<div style="font-weight:500;font-size:19px;line-height:1.3;color:#FFFFFF">Heading for an early 2027 launch</div>
+<p style="margin:0;font-size:14px;line-height:1.6;color:#8E8A9B">Early access with a handful of indie developers comes first, then the public release.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- PRICING -->
+<div id="pricing" style="background:#0B0A10;border-top:1px solid #1A1822;border-bottom:1px solid #1A1822">
+<div style="max-width:1200px;margin:0 auto;padding:120px 24px;box-sizing:border-box;display:flex;flex-direction:column;gap:56px">
+<div style="display:flex;flex-wrap:wrap;gap:24px 64px;align-items:flex-end;justify-content:space-between">
+<div style="flex:1 1 520px;min-width:0;display:flex;flex-direction:column;gap:18px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:1px;color:#8E8A9B">PRICING</div>
+<h2 style="margin:0;font-weight:500;font-size:48px;line-height:1.08;letter-spacing:-1.800px;color:#FFFFFF">Start free. <span style="color:#6E6A7C">Upgrade when you outgrow it.</span></h2>
+</div>
+<p style="flex:0 1 360px;margin:0;font-size:16px;line-height:1.6;color:#8E8A9B">Simple monthly plans. No usage surprises. Max and custom Enterprise plans are available for larger teams.</p>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:stretch">
+<div style="flex:1 1 300px;min-width:0;background:#0E0D13;border:1px solid #22202B;border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font-weight:500;font-size:16px;color:#FFFFFF">Free</div>
+<div style="font-size:14px;color:#8E8A9B">Try Veta on your next idea.</div>
+</div>
+<div style="font-weight:500;font-size:44px;letter-spacing:-1.500px;color:#FFFFFF;line-height:1">$0</div>
+<a href="#waitlist" style="display:flex;justify-content:center;border:1px solid #2E2A3A;background:#121117;color:#EEEDF2;padding:11px 16px;border-radius:9px;font-weight:500;font-size:14px">Join the waitlist</a>
+<div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #1E1C26;padding-top:20px;font-size:14px;color:#C9C6D4">
+<div style="display:flex;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>9 GDD credits</div>
+<div style="display:flex;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Full six-agent discussion</div>
+<div style="display:flex;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Scope Guard and task breakdown</div>
+</div>
+</div>
+<div style="flex:1 1 300px;min-width:0;background:#13111C;border:1px solid #3A3254;border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:22px;box-shadow:0 0 0 1px rgba(108,71,255,0.15),0 30px 80px rgba(108,71,255,0.12)">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><div style="font-weight:500;font-size:16px;color:#FFFFFF">Pro</div><span style="font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:1px;color:#0B0A10;background:#B7A6FF;padding:4px 8px;border-radius:6px">POPULAR</span></div>
+<div style="font-size:14px;color:#8E8A9B">For developers shipping a real project.</div>
+</div>
+<div style="font-weight:500;font-size:44px;letter-spacing:-1.500px;color:#FFFFFF;line-height:1">$19<span style="font-size:15px;font-weight:400;color:#8E8A9B;letter-spacing:0"> /month</span></div>
+<a href="#waitlist" style="display:flex;justify-content:center;background:#6C47FF;color:#FFFFFF;padding:11px 16px;border-radius:9px;font-weight:500;font-size:14px">Join the waitlist</a>
+<div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #2A2540;padding-top:20px;font-size:14px;color:#C9C6D4">
+<div style="display:flex;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>40 credits</div>
+<div style="display:flex;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Studio Memory</div>
+<div style="display:flex;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Market Intelligence</div>
+<div style="display:flex;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>GitHub integration</div>
+</div>
+</div>
+<div style="flex:1 1 300px;min-width:0;background:#0E0D13;border:1px solid #22202B;border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="font-weight:500;font-size:16px;color:#FFFFFF">Studio</div>
+<div style="font-size:14px;color:#8E8A9B">For small teams working together.</div>
+</div>
+<div style="font-weight:500;font-size:44px;letter-spacing:-1.500px;color:#FFFFFF;line-height:1">$49<span style="font-size:15px;font-weight:400;color:#8E8A9B;letter-spacing:0"> /month</span></div>
+<a href="#waitlist" style="display:flex;justify-content:center;border:1px solid #2E2A3A;background:#121117;color:#EEEDF2;padding:11px 16px;border-radius:9px;font-weight:500;font-size:14px">Join the waitlist</a>
+<div style="display:flex;flex-direction:column;gap:12px;border-top:1px solid #1E1C26;padding-top:20px;font-size:14px;color:#C9C6D4">
+<div style="display:flex;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Unlimited credits (fair use)</div>
+<div style="display:flex;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Team of up to 5</div>
+<div style="display:flex;gap:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B7A6FF" stroke-width="2" style="flex:none;margin-top:2px" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>Cross-studio intelligence</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- FAQ -->
+<div id="faq" style="max-width:1200px;margin:0 auto;padding:120px 24px;box-sizing:border-box;display:flex;flex-wrap:wrap;gap:40px 64px">
+<div style="flex:1 1 320px;min-width:0;display:flex;flex-direction:column;gap:18px">
+<div style="font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:1px;color:#8E8A9B">FAQ</div>
+<h2 style="margin:0;font-weight:500;font-size:48px;line-height:1.08;letter-spacing:-1.800px;color:#FFFFFF">Questions, <span style="color:#6E6A7C">answered.</span></h2>
+<p style="margin:0;font-size:16px;line-height:1.6;color:#8E8A9B">Something else on your mind? Join the waitlist and reply to the first email.</p>
+</div>
+<div style="flex:1.6 1 520px;min-width:0;border-top:1px solid #22202B">
+<details style="border-bottom:1px solid #22202B">
+<summary style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;font-size:16px;font-weight:500;color:#EEEDF2">Can I use Veta today?<span class="faq-plus" style="flex:none;font-size:22px;line-height:1;color:#8E8A9B;transition:transform 0.2s">+</span></summary>
+<p style="margin:0 0 22px;font-size:15px;line-height:1.6;color:#8E8A9B;max-width:620px">Not yet. Veta launches in early 2027. People on the waitlist get early access first. You can already try the working demo, with producer chat, a task board and Scope Guard.</p>
+</details>
+<details style="border-bottom:1px solid #22202B">
+<summary style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;font-size:16px;font-weight:500;color:#EEEDF2">What happens to my game ideas?<span class="faq-plus" style="flex:none;font-size:22px;line-height:1;color:#8E8A9B;transition:transform 0.2s">+</span></summary>
+<p style="margin:0 0 22px;font-size:15px;line-height:1.6;color:#8E8A9B;max-width:620px">In this prototype, your text is sent to the AI only to produce your analysis, and Veta does not save it. A full data policy, covering what is stored and how it is used, will be published before launch.</p>
+</details>
+<details style="border-bottom:1px solid #22202B">
+<summary style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;font-size:16px;font-weight:500;color:#EEEDF2">Which game engines does it work with?<span class="faq-plus" style="flex:none;font-size:22px;line-height:1;color:#8E8A9B;transition:transform 0.2s">+</span></summary>
+<p style="margin:0 0 22px;font-size:15px;line-height:1.6;color:#8E8A9B;max-width:620px">Any. Veta plans from your design document, so the engine doesn't matter. Importing existing Unity and Godot projects is on the roadmap.</p>
+</details>
+<details style="border-bottom:1px solid #22202B">
+<summary style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;font-size:16px;font-weight:500;color:#EEEDF2">What is a credit?<span class="faq-plus" style="flex:none;font-size:22px;line-height:1;color:#8E8A9B;transition:transform 0.2s">+</span></summary>
+<p style="margin:0 0 22px;font-size:15px;line-height:1.6;color:#8E8A9B;max-width:620px">Credits are used when Veta analyzes a GDD. The free plan includes 9, Pro includes 40 a month, and Studio is unlimited under fair use.</p>
+</details>
+<details style="border-bottom:1px solid #22202B">
+<summary style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;font-size:16px;font-weight:500;color:#EEEDF2">Is this only for solo developers?<span class="faq-plus" style="flex:none;font-size:22px;line-height:1;color:#8E8A9B;transition:transform 0.2s">+</span></summary>
+<p style="margin:0 0 22px;font-size:15px;line-height:1.6;color:#8E8A9B;max-width:620px">No. The launch features work the same for solo developers and small teams. Team features like a dependency map and a shared decision log come later.</p>
+</details>
+<details style="border-bottom:1px solid #22202B">
+<summary style="display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;font-size:16px;font-weight:500;color:#EEEDF2">Who is building Veta?<span class="faq-plus" style="flex:none;font-size:22px;line-height:1;color:#8E8A9B;transition:transform 0.2s">+</span></summary>
+<p style="margin:0 0 22px;font-size:15px;line-height:1.6;color:#8E8A9B;max-width:620px">One indie developer who is also shipping his own game, and who built Veta to fix the problems he kept running into. Progress is shared in the devlog.</p>
+</details>
+</div>
+</div>
+
+<!-- CTA / WAITLIST -->
+<div id="waitlist" style="max-width:1200px;margin:0 auto;padding:0 24px 120px;box-sizing:border-box">
+<div style="position:relative;overflow:hidden;border:1px solid #2A2540;border-radius:20px;padding:88px 32px;display:flex;flex-direction:column;gap:22px;align-items:center;text-align:center;background:radial-gradient(ellipse 70% 90% at 50% 120%,rgba(108,71,255,0.45),rgba(14,13,19,0) 70%),#0E0D13">
+<h2 style="margin:0;font-weight:500;font-size:52px;line-height:1.05;letter-spacing:-2px;color:#FFFFFF;max-width:680px">Ship the game you planned.</h2>
+<p style="margin:0;font-size:17px;line-height:1.6;color:#B4B0C2;max-width:500px">Join the waitlist for early access, and help shape what gets built next.</p>
+<form id="wl-form" style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center;width:100%;max-width:480px;margin-top:6px">
+<label for="email" style="position:absolute;left:-9999px">Email address</label>
+<input id="email" name="email" type="email" required="" placeholder="you@studio.com" style="flex:1 1 240px;min-width:0;box-sizing:border-box;padding:13px 16px;border-radius:10px;border:1px solid #4A4466;background:#09080D;color:#EEEDF2;font-size:16px;font-family:'Geist',sans-serif">
+<button type="submit" style="background:#FFFFFF;color:#0B0A10;border:0;box-shadow:0 0 0 1px #FFFFFF,0 8px 30px rgba(108,71,255,0.45);padding:13px 22px;border-radius:10px;font-weight:500;font-size:15px;font-family:'Geist',sans-serif;cursor:pointer">Join the waitlist</button>
+</form>
+<div style="min-height:22px;font-size:14px;color:#A59FBB"></div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<div style="border-top:1px solid #1A1822;overflow:hidden">
+<div style="max-width:1200px;margin:0 auto;padding:56px 24px 0;box-sizing:border-box;display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between">
+<div style="flex:1 1 260px;display:flex;flex-direction:column;gap:14px">
+<div style="display:flex;align-items:center;gap:10px">
+<svg width="22" height="22" viewBox="0 0 44 44" aria-hidden="true"><path d="M3 7 Q9 4 12 11 L21 31 L32 7 Q34.500 2 41 3 Q36 5.500 34 11 L25 37 Q21.500 45 17 37 Z" fill="#FFFFFF"></path></svg>
+<span style="font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:19px;color:#FFFFFF">veta</span>
+</div>
+<div style="font-size:14px;line-height:1.6;color:#8E8A9B;max-width:260px">The Game Studio OS for indie developers.</div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:40px 72px;font-size:14px">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">PRODUCT</div>
+<a href="#product" style="color:#C9C6D4">Analyzer</a>
+<a href="#features" style="color:#C9C6D4">Features</a>
+<a href="#pricing" style="color:#C9C6D4">Pricing</a>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:1px;color:#8E8A9B">COMPANY</div>
+<a href="#devlog" style="color:#C9C6D4">Devlog</a>
+<a href="#faq" style="color:#C9C6D4">FAQ</a>
+<a href="#waitlist" style="color:#C9C6D4">Waitlist</a>
+</div>
+</div>
+</div>
+<div style="max-width:1200px;margin:0 auto;padding:48px 24px 24px;box-sizing:border-box;display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;font-size:13px;color:#8E8A9B">
+<span>© 2026 Veta. All rights reserved.</span>
+<span>Made for people who make games.</span>
+</div>
+<div aria-hidden="true" style="text-align:center;font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:min(34vw,420px);line-height:0.78;letter-spacing:-0.040em;color:#14121B;margin-bottom:-0.12em;user-select:none">veta</div>
+</div>
+
+</div>
+<!--/PRERENDER--></div>
 <script>
 const ENDPOINT = 'https://formspree.io/f/mqpebzlq';
 const SAMPLES = [
@@ -231,7 +758,7 @@ function view() {
 Early access opens before the 2027 launch
 </div>
 <h1 style="margin:0;font-family:'Geist',sans-serif;font-weight:500;font-size:76px;line-height:1.02;letter-spacing:-3px;color:#FFFFFF">Plan the game you can actually ship</h1>
-<p class="hero-sub" style="margin:0;font-size:19px;line-height:1.6;color:#8E8A9B;max-width:620px">Veta reads your game design, scores how ready it is to build, breaks it into estimated tasks, and warns you before scope creep costs you weeks.</p>
+<p class="hero-sub" style="margin:0;font-size:19px;line-height:1.6;color:#8E8A9B;max-width:620px"><strong style="color:#FFFFFF;font-weight:500">Veta is an AI production planner for indie game developers.</strong> It reads your game design, scores how ready it is to build, breaks it into estimated tasks, and warns you before scope creep costs you weeks.</p>
 <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
 <a href="${demoUrl}" target="${demoTarget}" style="background:#EEEDF2;color:#0B0A10;padding:13px 22px;border-radius:10px;font-weight:500;font-size:15px">Try the Veta demo</a>
 <a class="btn-ghost" href="#waitlist" style="padding:13px 22px;border-radius:10px;font-weight:500;font-size:15px">Join the waitlist</a>
