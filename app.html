@@ -1,0 +1,1435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>body{margin:0}[hidden]{display:none!important}</style>
+<script>window.VETA_SITE = "index.html";</script>
+</head>
+<body>
+<title>Veta Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: fixed left rail (project + tools) and one working surface; a dark production console, single committed look. */
+:root{
+  --bg:#09080D; --surface:#0E0D13; --raised:#121117; --hover:#17151E;
+  --line:#22202B; --line-strong:#2E2A3A;
+  --text:#EEEDF2; --muted:#8E8A9B; --soft:#C9C6D4;
+  --accent:#6C47FF; --accent-soft:#B7A6FF; --accent-wash:rgba(108,71,255,.12);
+  --ok:#9BE7B5; --ok-wash:#16241C; --ok-line:#2E5A3E;
+  --warn:#FFD08A; --warn-wash:#2A2216; --warn-line:#6B5A2E;
+  --bad:#FFB4A8; --bad-wash:#2A1B1F; --bad-line:#5A3434;
+  --font-display:'Bricolage Grotesque',Georgia,serif;
+  --font-body:'Geist',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:12px; --r-s:8px;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+*{box-sizing:border-box}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+a{color:var(--accent-soft)}
+:focus-visible{outline:2px solid var(--accent-soft);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+#app{display:flex;height:100%;min-height:0}
+
+/* rail */
+.rail{width:248px;flex:none;background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.rail-top{padding:18px 16px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line)}
+.wordmark{font-family:var(--font-display);font-weight:700;font-size:21px;letter-spacing:-.5px;color:#fff}
+.chip{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line-strong);border-radius:6px;padding:2px 6px}
+.chip.example{color:var(--warn);border-color:var(--warn-line);background:var(--warn-wash)}
+.rail-section{padding:14px 16px 6px}
+.label{font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.proj-row{display:flex;gap:6px;margin-top:8px}
+.proj-row select{flex:1;min-width:0;background:var(--raised);border:1px solid var(--line-strong);border-radius:var(--r-s);padding:8px 10px}
+.icon-btn{flex:none;width:36px;height:36px;display:grid;place-items:center;background:var(--raised);border:1px solid var(--line-strong);border-radius:var(--r-s);color:var(--soft)}
+.icon-btn:hover{background:var(--hover);color:#fff}
+.nav{display:flex;flex-direction:column;gap:2px;padding:8px}
+.nav button{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:transparent;border:1px solid transparent;border-radius:var(--r-s);padding:9px 10px;color:var(--soft);font-weight:500}
+.nav button:hover{background:var(--hover);color:#fff}
+.nav button[aria-current="page"]{background:var(--raised);border-color:var(--line-strong);color:#fff}
+.nav svg{flex:none;color:var(--muted)}
+.nav button[aria-current="page"] svg{color:var(--accent-soft)}
+.nav .count{margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--muted)}
+.rail-bottom{margin-top:auto;padding:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.ai-status{display:flex;align-items:center;gap:10px;width:100%;background:var(--raised);border:1px solid var(--line-strong);border-radius:var(--r-s);padding:9px 10px;text-align:left}
+.ai-status:hover{background:var(--hover)}
+.dot{width:8px;height:8px;border-radius:99px;flex:none;background:var(--muted)}
+.dot.on{background:var(--ok);box-shadow:0 0 0 3px rgba(155,231,181,.15)}
+.dot.off{background:var(--bad)}
+.ai-status .t{display:flex;flex-direction:column;min-width:0}
+.ai-status .t b{font-weight:500;font-size:13px}
+.ai-status .t span{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.back-link{font-size:13px;color:var(--muted);text-decoration:none;padding:4px 2px}
+.back-link:hover{color:#fff}
+
+/* main */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0}
+.topbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 28px;border-bottom:1px solid var(--line)}
+.topbar h1{margin:0;font-size:20px;font-weight:500;letter-spacing:-.4px}
+.topbar .sub{color:var(--muted);font-size:13px}
+.topbar .grow{flex:1}
+.view{flex:1;min-height:0;overflow:auto;padding:24px 28px 40px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.panel-head{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:var(--r-s);padding:9px 14px;font-weight:500;font-size:14px;border:1px solid var(--line-strong);background:var(--raised);color:var(--text);min-height:38px;white-space:nowrap}
+.btn:hover{background:var(--hover)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{background:#7a58ff}
+.btn.light{background:var(--text);border-color:var(--text);color:#0B0A10}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--bad);border-color:var(--bad-line);background:transparent}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.sm{min-height:30px;padding:5px 10px;font-size:13px}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label{font-size:12px;color:var(--muted)}
+.input,.textarea,.select{width:100%;background:var(--raised);border:1px solid var(--line-strong);border-radius:var(--r-s);padding:9px 12px;color:var(--text)}
+.textarea{resize:vertical;line-height:1.6}
+.input:focus,.textarea:focus,.select:focus{outline:none;border-color:var(--accent-soft)}
+.note{font-size:13px;color:var(--muted)}
+.msg{font-size:13px;color:var(--soft)}
+.msg.err{color:var(--bad)}
+.empty{padding:28px;text-align:center;color:var(--muted);font-size:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.tag{font-family:var(--font-mono);font-size:11px;color:var(--soft);background:var(--raised);border:1px solid var(--line-strong);border-radius:6px;padding:2px 7px;white-space:nowrap}
+.pill{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;border-radius:6px;padding:4px 9px;border:1px solid var(--line-strong);white-space:nowrap}
+.pill.LOW,.pill.IN{color:var(--ok);background:var(--ok-wash);border-color:var(--ok-line)}
+.pill.MEDIUM,.pill.RISKY{color:var(--warn);background:var(--warn-wash);border-color:var(--warn-line)}
+.pill.HIGH,.pill.VERY,.pill.OUT{color:var(--bad);background:var(--bad-wash);border-color:var(--bad-line)}
+
+/* chat */
+.chat{display:flex;flex-direction:column;height:100%;min-height:0;max-width:880px;margin:0 auto}
+.agents{display:flex;gap:6px;flex-wrap:wrap}
+.agents button{border:1px solid var(--line-strong);background:transparent;border-radius:999px;padding:6px 12px;font-size:13px;color:var(--soft)}
+.agents button[aria-pressed="true"]{background:var(--text);border-color:var(--text);color:#0B0A10}
+.thread{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:18px;padding:8px 2px 20px}
+.m{display:flex;gap:12px;align-items:flex-start}
+.m .who{flex:none;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-family:var(--font-mono);font-size:11px;border:1px solid var(--line-strong);color:var(--muted)}
+.m.assistant .who{background:var(--accent);border-color:var(--accent);color:#fff}
+.m .body{min-width:0;flex:1;line-height:1.7;color:var(--text)}
+.m.user .body{background:var(--raised);border:1px solid var(--line);border-radius:var(--r);padding:10px 14px}
+.m .meta{font-size:12px;color:var(--muted);margin-bottom:2px}
+.body p{margin:0 0 10px}.body p:last-child{margin-bottom:0}
+.body ul,.body ol{margin:4px 0 10px 18px;padding:0}.body li{margin:3px 0}
+.body h4{margin:12px 0 6px;font-size:15px;font-weight:600}
+.body code{font-family:var(--font-mono);font-size:12.5px;background:var(--raised);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+.body pre{font-family:var(--font-mono);font-size:12.5px;background:var(--raised);border:1px solid var(--line);border-radius:var(--r-s);padding:12px;overflow-x:auto;white-space:pre}
+.body strong{color:#fff;font-weight:600}
+.thinking{color:var(--muted)}
+.starters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:8px}
+.starters button{text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;color:var(--soft);line-height:1.45}
+.starters button:hover{border-color:var(--line-strong);color:#fff}
+.composer{border:1px solid var(--line-strong);background:var(--surface);border-radius:var(--r);padding:10px;display:flex;flex-direction:column;gap:8px}
+.composer textarea{background:transparent;border:0;outline:0;resize:none;min-height:52px;max-height:200px;line-height:1.6;padding:4px 6px}
+.composer .bar{display:flex;align-items:center;gap:8px;justify-content:space-between;flex-wrap:wrap}
+
+/* gdd */
+.gdd{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:20px;align-items:start}
+.meta-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:10px;padding:16px;border-bottom:1px solid var(--line)}
+.gdd-text{border:0;border-radius:0 0 var(--r) var(--r);background:transparent;min-height:440px;padding:16px;font-size:14px}
+.scores{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:16px}
+.score{background:var(--raised);border:1px solid var(--line);border-radius:var(--r-s);padding:14px;display:flex;flex-direction:column;gap:10px}
+.score .n{font-size:38px;font-weight:500;letter-spacing:-1.2px;line-height:1;font-variant-numeric:tabular-nums}
+.score .n span{font-size:15px;color:var(--muted);letter-spacing:0}
+.bar-track{height:4px;border-radius:99px;background:var(--line)}
+.bar-fill{height:4px;border-radius:99px}
+.rc-block{padding:14px 16px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+.rc-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+.rc-list li{display:flex;gap:10px;align-items:flex-start;color:var(--soft)}
+.rc-list li::before{content:"";flex:none;width:6px;height:6px;border-radius:99px;margin-top:8px;background:var(--b,var(--muted))}
+
+/* board */
+.board-summary{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px;min-width:150px;flex:1}
+.stat b{display:block;font-size:22px;font-weight:500;letter-spacing:-.5px;font-variant-numeric:tabular-nums}
+.stat span{font-size:12px;color:var(--muted)}
+.board{display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);display:flex;flex-direction:column;min-width:0}
+.col-head{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-bottom:1px solid var(--line)}
+.col-body{padding:10px;display:flex;flex-direction:column;gap:8px;min-height:80px}
+.card{background:var(--raised);border:1px solid var(--line);border-radius:var(--r-s);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.card .title{font-weight:500;line-height:1.4;overflow-wrap:anywhere}
+.card .foot{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.card .acts{margin-left:auto;display:flex;gap:4px}
+.mini{width:28px;height:28px;display:grid;place-items:center;background:transparent;border:1px solid var(--line-strong);border-radius:6px;color:var(--soft)}
+.mini:hover{background:var(--hover);color:#fff}
+.add-task{display:grid;grid-template-columns:minmax(0,1fr) 90px auto;gap:8px;margin-top:16px}
+
+/* scope */
+.scope{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px;align-items:start}
+.verdict{padding:18px 16px;display:flex;flex-direction:column;gap:12px}
+.verdict .big{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.verdict .delay{font-size:30px;font-weight:500;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+.hist{display:flex;flex-direction:column}
+.hist button{display:flex;align-items:center;gap:10px;justify-content:space-between;text-align:left;background:transparent;border:0;border-top:1px solid var(--line);padding:11px 16px;color:var(--soft)}
+.hist button:hover{background:var(--hover);color:#fff}
+
+/* decisions */
+.dec{max-width:880px}
+.dec-item{display:flex;gap:14px;padding:14px 16px;border-top:1px solid var(--line);align-items:flex-start}
+.dec-item:first-child{border-top:0}
+.dec-item .d-main{flex:1;min-width:0}
+.dec-item .d-text{font-weight:500;overflow-wrap:anywhere}
+.dec-item .d-why{color:var(--muted);margin-top:3px;overflow-wrap:anywhere}
+.dec-item .d-meta{font-family:var(--font-mono);font-size:11px;color:var(--muted);margin-top:6px}
+
+/* overview */
+.ov{display:flex;flex-direction:column;gap:20px;max-width:1080px}
+.ov-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.ov-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.ov-card .k{font-size:12px;color:var(--muted)}
+.ov-card .v{font-size:28px;font-weight:500;letter-spacing:-.8px;line-height:1.1;font-variant-numeric:tabular-nums}
+.ov-card .v small{font-size:14px;color:var(--muted);letter-spacing:0;font-weight:400}
+.ov-card .s{font-size:13px;color:var(--soft)}
+.ov-two{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:20px;align-items:start}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line)}
+.steps li:first-child{border-top:0}
+.steps .ck{flex:none;width:22px;height:22px;border-radius:99px;border:1.5px solid var(--line-strong);display:grid;place-items:center;font-size:12px;font-family:var(--font-mono);color:var(--muted)}
+.steps li.done .ck{background:var(--ok-wash);border-color:var(--ok-line);color:var(--ok)}
+.steps li.next .ck{border-color:var(--accent-soft);color:var(--accent-soft)}
+.steps .st{flex:1;min-width:0}
+.steps .st b{display:block;font-weight:500}
+.steps .st span{font-size:13px;color:var(--muted)}
+.steps li.done .st b{color:var(--soft)}
+.banner{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:var(--accent-wash);border:1px solid #3B2F7A;border-radius:var(--r);padding:14px 16px}
+.banner .bt{flex:1;min-width:220px}
+.banner .bt b{display:block;font-weight:500}
+.banner .bt span{font-size:13px;color:var(--soft)}
+.src{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;border-radius:5px;padding:2px 6px;border:1px solid var(--line-strong);color:var(--muted)}
+.src.ai{color:var(--accent-soft);border-color:#3B2F7A;background:var(--accent-wash)}
+.nochat{background:var(--surface);border:1px solid var(--line-strong);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:#0B0A10;border-radius:10px;padding:10px 16px;font-weight:500;font-size:14px;z-index:60;box-shadow:0 10px 40px rgba(0,0,0,.5);max-width:calc(100% - 32px)}
+@media (max-width:960px){.ov-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.ov-two{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){
+  .ov-grid{grid-template-columns:minmax(0,1fr);gap:8px}
+  .ov-card{flex-direction:row;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 10px;padding:12px 14px}
+  .ov-card .v{font-size:22px}
+  .ov-card .s{flex-basis:100%;font-size:12px}
+  .steps .st span{display:none}
+}
+@media (max-width:820px){
+  .back-link{display:none}
+  .rail-top{padding:12px 16px}
+  .rail-section{padding:10px 16px 2px}
+  .rail-section .label{display:none}
+  .proj-row{margin-top:0}
+  .ai-status{padding:7px 10px}
+}
+
+/* wizard + templates */
+.tpl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.tpl{display:flex;flex-direction:column;gap:2px;border:1px solid var(--line-strong);border-radius:var(--r-s);padding:10px 12px;cursor:pointer;background:var(--raised)}
+.tpl:has(input:checked){border-color:var(--accent-soft);background:var(--accent-wash)}
+.tpl input{position:absolute;opacity:0;pointer-events:none}
+.tpl b{font-weight:500;font-size:14px}
+.tpl span{font-size:12px;color:var(--muted)}
+.wiz-two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.hint{font-size:12px;color:var(--muted)}
+.tpl-chips{display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px 0}
+.tpl-chips button{border:1px solid var(--line-strong);background:var(--raised);border-radius:999px;padding:5px 11px;font-size:13px;color:var(--soft)}
+.tpl-chips button:hover{color:#fff;border-color:var(--accent-soft)}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--soft)}
+.check input{margin-top:3px;accent-color:var(--accent)}
+.status{font-family:var(--font-mono);font-size:11px;letter-spacing:.06em;border-radius:6px;padding:3px 8px;border:1px solid;white-space:nowrap;display:inline-block}
+.status.ok{color:var(--ok);background:var(--ok-wash);border-color:var(--ok-line)}
+.status.warn{color:var(--warn);background:var(--warn-wash);border-color:var(--warn-line)}
+.status.bad{color:var(--bad);background:var(--bad-wash);border-color:var(--bad-line)}
+.shift{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.shift .arrow{color:var(--muted)}
+@media (max-width:520px){.wiz-two{grid-template-columns:minmax(0,1fr)}.tpl{padding:9px 10px}.tpl span{display:none}.tpl b{font-size:13px}}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(5,4,8,.72);display:grid;place-items:center;padding:16px;z-index:50}
+.sheet{width:min(560px,100%);max-height:calc(100% - 32px);overflow:auto;background:var(--surface);border:1px solid var(--line-strong);border-radius:16px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+.sheet-head h2{margin:0;font-size:17px;font-weight:500}
+.sheet-body{padding:20px;display:flex;flex-direction:column;gap:16px}
+.choice{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line-strong);border-radius:var(--r);padding:12px 14px;cursor:pointer}
+.choice:has(input:checked){border-color:var(--accent-soft);background:var(--accent-wash)}
+.choice input{margin-top:3px;accent-color:var(--accent)}
+.choice b{font-weight:500}
+.choice .note{display:block;margin-top:2px}
+.confirm{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:var(--bad-wash);border:1px solid var(--bad-line);border-radius:var(--r-s);padding:10px 12px}
+
+@media (max-width:960px){
+  .gdd,.scope{grid-template-columns:minmax(0,1fr)}
+  .meta-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:820px){
+  html,body{height:auto}
+  #app{flex-direction:column;height:auto}
+  .rail{width:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .nav{flex-direction:row;overflow-x:auto;padding:8px 12px}
+  .nav button{width:auto;white-space:nowrap}
+  .nav .count{display:none}
+  .rail-bottom{flex-direction:row;align-items:center;border-top:0;padding:0 12px 12px}
+  .rail-bottom .ai-status{flex:1;min-width:0}
+  .topbar{padding:14px 16px}
+  .view{padding:16px 16px 32px;overflow:visible}
+  .chat{height:auto}
+  .thread{overflow:visible}
+  .starters{grid-template-columns:minmax(0,1fr)}
+  .board{grid-template-columns:repeat(4,minmax(240px,1fr))}
+  .add-task{grid-template-columns:minmax(0,1fr) 80px}
+  .add-task .btn{grid-column:1 / -1}
+}
+</style>
+
+<div id="app">
+  <aside class="rail" aria-label="Veta navigation">
+    <div class="rail-top">
+      <svg width="22" height="22" viewBox="0 0 44 44" aria-hidden="true"><path d="M3 7 Q9 4 12 11 L21 31 L32 7 Q34.5 2 41 3 Q36 5.5 34 11 L25 37 Q21.5 45 17 37 Z" fill="#FFFFFF"/></svg>
+      <span class="wordmark">veta</span>
+      <span class="chip">Demo</span>
+    </div>
+    <div class="rail-section">
+      <label class="label" for="proj-select">Project</label>
+      <div class="proj-row">
+        <select id="proj-select"></select>
+        <button class="icon-btn" id="new-proj" type="button" aria-label="New project" title="New project">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        </button>
+      </div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="rail-bottom">
+      <button class="ai-status" id="ai-status" type="button"></button>
+      <a class="back-link" id="back-link" href="#" hidden>Back to the Veta site</a>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar" id="topbar"></div>
+    <div class="view" id="view"></div>
+  </main>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+<div class="modal" id="wizard" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="wiz-title" style="width:min(640px,100%)">
+    <div class="sheet-head">
+      <h2 id="wiz-title">Start a new game</h2>
+      <button class="icon-btn" type="button" id="wiz-close" aria-label="Close">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <form class="sheet-body" id="wiz-form" autocomplete="off"></form>
+  </div>
+</div>
+<div class="modal" id="settings" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="sheet-head">
+      <h2 id="settings-title">AI connection</h2>
+      <button class="icon-btn" type="button" id="settings-close" aria-label="Close settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="sheet-body" id="settings-body"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+'use strict';
+
+/* ---------- constants ---------- */
+var GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+var MODELS = [
+  { id: 'openai/gpt-oss-120b', label: 'GPT-OSS 120B (best answers)' },
+  { id: 'openai/gpt-oss-20b', label: 'GPT-OSS 20B (faster)' }
+];
+var STORE_KEY = 'veta-demo-v1';
+var KEY_KEY = 'veta-groq-key';
+var SITE = window.VETA_SITE || 'https://claude.ai/artifact/Aoei7coefUgPxtVHv7Uh53';
+var COLS = [
+  { id: 'backlog', name: 'Post-launch' },
+  { id: 'todo', name: 'To do' },
+  { id: 'doing', name: 'In progress' },
+  { id: 'done', name: 'Done' }
+];
+var AGENTS = [
+  { id: 'producer', name: 'Producer', role: 'the producer. You care most about scope, schedule and actually shipping' },
+  { id: 'designer', name: 'Designer', role: 'the game designer. You care most about the core loop, player experience and what makes it fun' },
+  { id: 'tech', name: 'Tech lead', role: 'the technical lead. You care most about architecture, engine choices, technical risk and realistic estimates' },
+  { id: 'marketing', name: 'Marketing', role: 'the marketing lead. You care most about the Steam page, wishlists, trailers and positioning' }
+];
+var STARTERS = [
+  'What should I cut to ship faster?',
+  'Is my core loop clear enough to start building?',
+  'Plan my next two weeks from the task board.',
+  'Write a Steam short description for this game.'
+];
+var VIEWS = [
+  { id: 'home', name: 'Overview', icon: '<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/>' },
+  { id: 'chat', name: 'Producer chat', icon: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/>' },
+  { id: 'gdd', name: 'GDD & report', icon: '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/>' },
+  { id: 'tasks', name: 'Task board', icon: '<rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="10" rx="1"/><rect x="17" y="4" width="4" height="13" rx="1"/>' },
+  { id: 'scope', name: 'Scope Guard', icon: '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>' },
+  { id: 'decisions', name: 'Decision log', icon: '<path d="M4 6h16M4 12h16M4 18h10"/>' }
+];
+
+/* ---------- utils ---------- */
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+function uid() { return Math.random().toString(36).slice(2, 10); }
+function clamp(v, lo, hi) { return Math.min(hi, Math.max(lo, v)); }
+function num(v, lo, hi, def) { var n = Number(v); return isFinite(n) ? clamp(n, lo, hi) : def; }
+function half(v) { return Math.round(v * 2) / 2; }
+function strs(a, max) { return (Array.isArray(a) ? a : []).map(function (x) { return String(x == null ? '' : x).trim(); }).filter(Boolean).slice(0, max); }
+function fmtDate(t) { try { return new Date(t).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return ''; } }
+function icon(path, size) { return '<svg width="' + (size || 16) + '" height="' + (size || 16) + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + path + '</svg>'; }
+var I = {
+  left: '<path d="m15 18-6-6 6-6"/>', right: '<path d="m9 18 6-6-6-6"/>', x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>', spark: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>'
+};
+
+function md(text) {
+  var src = String(text || '').replace(/\r/g, '');
+  var blocks = [];
+  src = src.replace(/```[a-zA-Z0-9]*\n?([\s\S]*?)```/g, function (_, code) { blocks.push(code); return '\u0000' + (blocks.length - 1) + '\u0000'; });
+  var lines = esc(src).split('\n');
+  var out = [], list = null, para = [];
+  function inline(s) {
+    return s.replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>').replace(/(^|[^*])\*([^*\s][^*]*)\*/g, '$1<em>$2</em>');
+  }
+  function flushPara() { if (para.length) { out.push('<p>' + inline(para.join('<br>')) + '</p>'); para = []; } }
+  function flushList() { if (list) { out.push('<' + list.t + '>' + list.items.map(function (i) { return '<li>' + inline(i) + '</li>'; }).join('') + '</' + list.t + '>'); list = null; } }
+  lines.forEach(function (line) {
+    var m;
+    if (/^\u0000\d+\u0000$/.test(line.trim())) { flushPara(); flushList(); var i = +line.trim().replace(/\u0000/g, ''); out.push('<pre>' + esc(blocks[i]) + '</pre>'); return; }
+    if ((m = line.match(/^\s*[-*•]\s+(.*)$/))) { flushPara(); if (!list || list.t !== 'ul') { flushList(); list = { t: 'ul', items: [] }; } list.items.push(m[1]); return; }
+    if ((m = line.match(/^\s*\d+[.)]\s+(.*)$/))) { flushPara(); if (!list || list.t !== 'ol') { flushList(); list = { t: 'ol', items: [] }; } list.items.push(m[1]); return; }
+    if ((m = line.match(/^\s*#{1,6}\s+(.*)$/))) { flushPara(); flushList(); out.push('<h4>' + inline(m[1]) + '</h4>'); return; }
+    if (!line.trim()) { flushPara(); flushList(); return; }
+    flushList(); para.push(line);
+  });
+  flushPara(); flushList();
+  return out.join('');
+}
+
+function parseJson(t) {
+  if (t && typeof t === 'object') return t;
+  t = String(t || '');
+  try { return JSON.parse(t); } catch (e) {}
+  var f = t.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (f) { try { return JSON.parse(f[1]); } catch (e) {} }
+  var a = t.indexOf('{'), b = t.lastIndexOf('}');
+  if (a >= 0 && b > a) { try { return JSON.parse(t.slice(a, b + 1)); } catch (e) {} }
+  throw { code: 'json' };
+}
+
+/* ---------- storage ---------- */
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+function lsDel(k) { try { localStorage.removeItem(k); } catch (e) {} }
+
+function exampleProject() {
+  var now = Date.now();
+  return {
+    id: uid(), example: true, name: 'Ember Hollow', genre: 'Co-op roguelike', team: 2, months: 12, release: plusMonths(12),
+    gdd: [
+      'Pitch',
+      'A 2-4 player online co-op roguelike. Players descend through a burning forest, rescuing lost spirits before the fire spreads.',
+      '',
+      'Core loop',
+      'Enter a run, clear 6-8 rooms of enemies, rescue spirits to earn embers, spend embers on permanent upgrades at the camp, start the next run.',
+      '',
+      'Key features',
+      '- Online co-op for 2-4 players',
+      '- Rooms arranged procedurally from hand-made templates',
+      '- 3 playable characters with distinct abilities',
+      '- Camp hub with permanent upgrades',
+      '- 3 biomes, 1 boss each',
+      '',
+      'Art',
+      'Stylized low-poly, warm fire palette.',
+      '',
+      'Team and timeline',
+      '2 developers (1 programmer, 1 artist). 12 months to Steam Early Access.'
+    ].join('\n'),
+    report: {
+      example: true, at: now, quality: 7, readiness: 5, riskLevel: 'HIGH',
+      coreLoop: 'Run through burning rooms, rescue spirits for embers, upgrade at camp, repeat.',
+      strengths: ['The core loop is short and easy to explain', 'Hand-made room templates keep procedural levels under control', 'Team and timeline are stated'],
+      risks: ['Online co-op from day one is heavy for one programmer', '3 characters, 3 biomes and 3 bosses is a lot of content for one artist', 'No plan yet for how co-op scales enemy difficulty'],
+      missing: ['A target length for one run', 'What the first playable build must include']
+    },
+    tasks: [
+      { id: uid(), title: 'Movement prototype', days: 3, system: 'Core', col: 'done' },
+      { id: uid(), title: 'Character 1 abilities', days: 5, system: 'Combat', col: 'doing' },
+      { id: uid(), title: 'Player controller and camera', days: 4, system: 'Core', col: 'todo' },
+      { id: uid(), title: 'Room template system', days: 6, system: 'Levels', col: 'todo' },
+      { id: uid(), title: 'Online lobby and session', days: 10, system: 'Networking', col: 'todo' },
+      { id: uid(), title: 'First enemy archetype', days: 5, system: 'Enemies', col: 'todo' },
+      { id: uid(), title: 'Fishing mini-game at camp', days: 8, system: 'Camp', col: 'backlog' }
+    ],
+    decisions: [
+      { id: uid(), at: now, source: 'Manual', text: 'Online co-op only, no local split-screen', why: 'Halves the input and camera work for a single programmer.' },
+      { id: uid(), at: now, source: 'Scope Guard', text: 'Park the camp fishing mini-game until after Early Access', why: 'Outside the core loop and about 2 weeks of extra work.' }
+    ],
+    chat: [],
+    checks: []
+  };
+}
+function blankProject(name) {
+  return { id: uid(), example: false, name: name || 'Untitled game', genre: '', team: 1, months: 12, release: plusMonths(12), gdd: '', report: null, tasks: [], decisions: [], chat: [], checks: [] };
+}
+
+var store = (function () {
+  var raw = lsGet(STORE_KEY);
+  if (raw) { try { var s = JSON.parse(raw); if (s && s.projects && s.projects.length) return s; } catch (e) {} }
+  var p = exampleProject();
+  return { v: 1, current: p.id, view: 'home', agent: 'producer', provider: 'auto', model: MODELS[0].id, projects: [p] };
+})();
+var saveTimer = null;
+function save() { lsSet(STORE_KEY, JSON.stringify(store)); }
+function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
+function P() { return store.projects.find(function (p) { return p.id === store.current; }) || store.projects[0]; }
+store.projects.forEach(function (p) { if (!parseIso(p.release)) p.release = plusMonths(p.months || 12); });
+
+var ui = { busy: {}, ctl: {}, msg: {}, confirm: null, scopeResult: null, scopeIdea: '' };
+
+/* ---------- AI layer ---------- */
+var claudeSample = null;
+try {
+  if (window.claude && window.claude.use) {
+    window.claude.use('sample').then(function (s) { claudeSample = s || null; renderStatus(); }).catch(function () { claudeSample = null; });
+  }
+} catch (e) {}
+
+function groqKey() { return lsGet(KEY_KEY) || ''; }
+var serverAI = false; // true when this site's /api/ai proxy has a key configured
+function checkServerAI() {
+  if (!/^https?:$/.test(location.protocol)) return;
+  fetch('/api/ai', { method: 'GET', headers: { 'Accept': 'application/json' } })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) { if (j && j.ok) { serverAI = true; renderStatus(); if (!ui.busy.chat) renderView(); } })
+    .catch(function () {});
+}
+function provider() {
+  if (store.provider === 'groq') return groqKey() ? 'groq' : null;
+  if (store.provider === 'claude') return claudeSample ? 'claude' : null;
+  if (groqKey()) return 'groq';
+  if (serverAI) return 'veta';
+  if (claudeSample) return 'claude';
+  return null;
+}
+function modelLabel() { var m = MODELS.find(function (x) { return x.id === store.model; }); return m ? m.id.replace('openai/', '') : store.model; }
+
+function errText(e) {
+  var c = e && e.code;
+  if (c === 'cancelled') return 'Stopped.';
+  if (c === 'nokey') return 'Connect an AI first. Open AI connection in the bottom left.';
+  if (c === 'auth') return 'Groq rejected the API key. Check it in AI connection.';
+  if (c === 'rate' || c === 'rate_limited') return provider() === 'veta' ? 'The free demo AI is busy or your hourly limit is reached. Try again later, or add your own free Groq key in AI connection.' : 'The free limit is reached for now. Wait a minute and try again.';
+  if (c === 'model') return 'Groq could not use this model. Pick the other model in AI connection.';
+  if (c === 'network') return provider() === 'veta' ? 'Could not reach the Veta demo AI. Check your connection and try again.' : 'Could not reach Groq. Check your connection. Inside claude.ai, Groq is blocked, so use Claude there.';
+  if (c === 'json' || c === 'invalid_json') return 'The answer came back in the wrong format. Try again.';
+  if (c === 'not_granted' || c === 'sampling_disabled') return 'Claude is not allowed for this page. Use a Groq key instead.';
+  if (c === 'refused') return 'The AI declined this request. Try rephrasing it.';
+  if (c === 'http') return (provider() === 'veta' ? 'The demo AI returned an error' : 'Groq returned an error') + (e.status ? ' (' + e.status + ')' : '') + '. Try again in a moment.';
+  return 'Something went wrong. Try again.';
+}
+
+function groqFetch(body, signal) {
+  var viaVeta = provider() === 'veta';
+  var headers = { 'Content-Type': 'application/json' };
+  if (!viaVeta) headers.Authorization = 'Bearer ' + groqKey();
+  return fetch(viaVeta ? '/api/ai' : GROQ_URL, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(body), signal: signal
+  }).catch(function (e) {
+    if (e && e.name === 'AbortError') throw { code: 'cancelled' };
+    throw { code: 'network' };
+  }).then(function (res) {
+    if (res.ok) return res;
+    return res.json().catch(function () { return {}; }).then(function (j) {
+      var msg = (j && j.error && j.error.message) || '';
+      var code = res.status === 401 || res.status === 403 ? 'auth' : res.status === 429 ? 'rate' : (res.status === 404 || /model/i.test(msg)) ? 'model' : 'http';
+      throw { code: code, status: res.status, message: msg };
+    });
+  });
+}
+
+/* messages: [{role:'system'|'user'|'assistant', content}] */
+function aiChat(messages, onText, signal) {
+  var pv = provider();
+  if (!pv) return Promise.reject({ code: 'nokey' });
+  if (pv === 'claude') {
+    var sys = messages.filter(function (m) { return m.role === 'system'; }).map(function (m) { return m.content; }).join('\n\n');
+    var turns = [{ role: 'user', content: sys }].concat(messages.filter(function (m) { return m.role !== 'system'; }));
+    return claudeSample(turns, { cache: false, signal: signal, onText: function (u) { onText(u.text); } }).then(function (r) { return r.text; });
+  }
+  return groqFetch({ model: store.model, messages: messages, temperature: 0.7, max_tokens: 3000, stream: true }, signal).then(function (res) {
+    if (!res.body || !res.body.getReader) {
+      return res.text().then(function (t) { var full = ''; t.split('\n').forEach(function (l) { full += sseDelta(l); }); onText(full); return full; });
+    }
+    var reader = res.body.getReader(), dec = new TextDecoder(), buf = '', full = '';
+    function pump() {
+      return reader.read().then(function (r) {
+        if (r.done) { if (buf) full += sseDelta(buf); onText(full); return full; }
+        buf += dec.decode(r.value, { stream: true });
+        var parts = buf.split('\n'); buf = parts.pop();
+        var added = '';
+        parts.forEach(function (l) { added += sseDelta(l); });
+        if (added) { full += added; onText(full); }
+        return pump();
+      });
+    }
+    return pump().catch(function (e) { if (e && (e.name === 'AbortError' || e.code === 'cancelled')) throw { code: 'cancelled' }; throw e && e.code ? e : { code: 'network' }; });
+  });
+}
+function sseDelta(line) {
+  line = line.trim();
+  if (line.indexOf('data:') !== 0) return '';
+  var d = line.slice(5).trim();
+  if (!d || d === '[DONE]') return '';
+  try { var j = JSON.parse(d); return (j.choices && j.choices[0] && j.choices[0].delta && j.choices[0].delta.content) || ''; } catch (e) { return ''; }
+}
+
+function aiJson(prompt, signal) {
+  var pv = provider();
+  if (!pv) return Promise.reject({ code: 'nokey' });
+  if (pv === 'claude') return claudeSample.json(prompt, { signal: signal });
+  return groqFetch({
+    model: store.model, temperature: 0.3, max_tokens: 4000,
+    messages: [{ role: 'system', content: 'You are a precise assistant. Reply with exactly one JSON object and nothing else.' }, { role: 'user', content: prompt }]
+  }, signal).then(function (res) { return res.json(); }).then(function (j) {
+    var c = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+    return parseJson(c);
+  });
+}
+
+function projectContext(p, opts) {
+  opts = opts || {};
+  var open = p.tasks.filter(function (t) { return t.col === 'todo' || t.col === 'doing'; });
+  var parts = [
+    'PROJECT: ' + p.name + (p.genre ? ' (' + p.genre + ')' : '') + '. Team: ' + (p.team || 1) + ' developer(s). Target release: ' + p.release + ' (about ' + (p.months || 12) + ' months from today: ' + isoDate(today0()) + ').',
+    'GDD:\n' + (p.gdd.trim() ? p.gdd.slice(0, opts.gddMax || 6000) : '(empty, the developer has not written one yet)')
+  ];
+  if (!opts.noTasks) {
+    parts.push('TASK BOARD: ' + p.tasks.length + ' tasks. Open: ' + (open.length ? open.slice(0, 15).map(function (t) { return t.title + ' (' + t.days + 'd, ' + t.col + ')'; }).join('; ') : 'none') + '. Parked for post-launch: ' + (p.tasks.filter(function (t) { return t.col === 'backlog'; }).map(function (t) { return t.title; }).join('; ') || 'none') + '.');
+  }
+  parts.push('DECISIONS ALREADY MADE:\n' + (p.decisions.length ? p.decisions.slice(0, 20).map(function (d) { return '- ' + d.text + (d.why ? ' (why: ' + d.why + ')' : ''); }).join('\n') : '(none yet)'));
+  return parts.join('\n\n');
+}
+
+/* ---------- genre templates ---------- */
+var TEMPLATES = [
+  { id: 'platformer', name: 'Platformer', sub: 'Levels, movement, hazards',
+    pitch: 'A tight 2D platformer about a lantern spirit climbing a ruined tower.', loop: 'Run and jump through a level, collect shards, reach the exit, unlock the next world.',
+    feats: ['Responsive movement with dash and wall jump', '4 worlds of 6 levels', 'Collectible shards that unlock secrets'],
+    sections: [['Movement', 'How does jumping feel? Double jump, dash, wall jump? Coyote time?'], ['Level structure', 'How many worlds and levels? How long is one level?']],
+    tasks: [['Movement and jump feel', 5, 'Core'], ['Camera follow', 2, 'Core'], ['Hazards set (spikes, pits, saws)', 3, 'Levels'], ['Checkpoints and respawn', 2, 'Core'], ['Level 1 greybox', 3, 'Levels'], ['Collectibles', 2, 'Levels'], ['World 1 (6 levels)', 8, 'Levels'], ['Menus and pause', 3, 'UI'], ['Save progress', 2, 'Core'], ['Playtest build', 2, 'Release']] },
+  { id: 'rage', name: 'Rage / precision', sub: 'Falls, frustration, clips',
+    pitch: 'A vertical rage climber where the character gets angrier, and the world gets stranger, every time you fall.', loop: 'Climb, fall, watch the game react, try again a little higher.',
+    feats: ['One continuous vertical world', 'Rage meter that warps controls after big falls', 'Sarcastic narrator that reacts to falls'],
+    sections: [['Fall rules', 'What happens when you fall? How far can a fall send you back?'], ['Clip moments', 'Which 3 moments will streamers react to?']],
+    tasks: [['Movement and fall feel', 5, 'Core'], ['Fall distance tracking', 2, 'Core'], ['Vertical world greybox', 5, 'Levels'], ['Rage meter and first chaos effect', 4, 'Systems'], ['Narrator taunt lines', 3, 'Narrative'], ['Fall recap screen', 3, 'UI'], ['Menus and settings', 3, 'UI'], ['Save height and stats', 2, 'Core'], ['Playtest build', 2, 'Release']] },
+  { id: 'roguelike', name: 'Roguelike', sub: 'Runs, rooms, upgrades',
+    pitch: 'A fast action roguelike where every run takes you deeper into a flooded city.', loop: 'Enter a run, clear rooms, pick upgrades, beat the boss or die, unlock permanent upgrades.',
+    feats: ['Hand-made room templates in random order', '3 enemy types and 1 boss per biome', 'Permanent upgrades between runs'],
+    sections: [['Run structure', 'How long is one run? How many rooms and biomes?'], ['Upgrades', 'What can the player pick during a run, and what stays after death?']],
+    tasks: [['Player controller and combat basics', 6, 'Combat'], ['Room template system', 6, 'Levels'], ['3 enemy types', 6, 'Enemies'], ['Run flow (start, rooms, death)', 4, 'Core'], ['In-run upgrades', 5, 'Progression'], ['Meta progression hub', 5, 'Progression'], ['Boss 1', 5, 'Enemies'], ['HUD and menus', 4, 'UI'], ['Save meta progress', 2, 'Core'], ['Balance pass', 3, 'Design']] },
+  { id: 'cozy', name: 'Cozy sim', sub: 'Farming, villagers, routine',
+    pitch: 'A cozy island sim where you restore an old tea farm and get to know the islanders.', loop: 'Plant and harvest, sell or gift goods, upgrade the farm, see the islanders change over the seasons.',
+    feats: ['Crops with seasons', '5 villagers with friendship levels', 'Home and farm decoration'],
+    sections: [['Daily rhythm', 'What does a typical in-game day look like?'], ['Villagers', 'How many, and how deep is each relationship?']],
+    tasks: [['Player movement and interaction', 4, 'Core'], ['Crops and growth', 6, 'Farming'], ['Day and calendar', 3, 'Systems'], ['Inventory', 4, 'Systems'], ['Shop and money', 4, 'Economy'], ['3 villagers with basic dialogue', 5, 'Characters'], ['Decoration placement', 5, 'Home'], ['Menus and HUD', 4, 'UI'], ['Save and load', 3, 'Core'], ['Playtest build', 2, 'Release']] },
+  { id: 'horror', name: 'Horror', sub: 'Atmosphere, chase, puzzles',
+    pitch: 'A short first-person horror game set in a night-shift bakery that should be empty.', loop: 'Explore, find clues, solve small puzzles, hide or run when the threat appears.',
+    feats: ['One dense location', 'A stalker enemy with simple AI', 'Light and sound driven scares'],
+    sections: [['Threat', 'What is the threat and how does it hunt the player?'], ['Pacing', 'Where are the calm moments and where are the scares?']],
+    tasks: [['First-person controller', 3, 'Core'], ['Lighting and atmosphere pass', 5, 'Art'], ['Enemy AI (patrol, chase)', 6, 'Enemies'], ['Hiding and chase rules', 4, 'Systems'], ['3 puzzles', 6, 'Puzzles'], ['Audio scares and ambience', 4, 'Audio'], ['Story notes and ending', 3, 'Narrative'], ['Menus and settings', 3, 'UI'], ['Save points', 2, 'Core'], ['Playtest build', 2, 'Release']] },
+  { id: 'narrative', name: 'Narrative', sub: 'Dialogue, choices, characters',
+    pitch: 'A narrative game about a shopkeeper deciding who gets credit in a neighbourhood running out of money.', loop: 'Meet a character, read the clues, make a choice, live with the consequence the next day.',
+    feats: ['Branching dialogue with flags', '6 recurring characters', '3 endings'],
+    sections: [['Characters', 'Who are the main characters and what does each one want?'], ['Choices', 'Which choices matter, and how does the game remember them?']],
+    tasks: [['Dialogue system (Yarn or Ink)', 5, 'Narrative'], ['Choices and flags', 4, 'Narrative'], ['Character portraits and states', 4, 'Art'], ['Day 1 script', 6, 'Writing'], ['Consequence system', 4, 'Systems'], ['Endings', 4, 'Writing'], ['Dialogue UI', 3, 'UI'], ['Save and load', 2, 'Core'], ['Playtest build', 2, 'Release']] },
+  { id: 'puzzle', name: 'Puzzle', sub: 'One mechanic, many levels',
+    pitch: 'A puzzle game where you rotate rooms of a house to guide light to the exit.', loop: 'Read the puzzle, try moves, find the trick, move to a harder level.',
+    feats: ['One core mechanic explored deeply', '40 hand-made puzzles', 'Hint system'],
+    sections: [['Core mechanic', 'What is the one rule every puzzle is built on?'], ['Difficulty curve', 'How do new ideas get introduced?']],
+    tasks: [['Core puzzle mechanic', 4, 'Core'], ['Level data format', 3, 'Tools'], ['First 15 puzzles', 8, 'Levels'], ['Undo and restart', 2, 'Core'], ['Hint system', 3, 'Systems'], ['Level select map', 3, 'UI'], ['Save progress', 2, 'Core'], ['Playtest build', 2, 'Release']] },
+  { id: 'survival', name: 'Survival / crafting', sub: 'Gather, craft, build',
+    pitch: 'A survival game on a frozen lake where you build a camp and keep a small group alive.', loop: 'Gather resources, craft tools, build shelter, survive the night, push further out.',
+    feats: ['Hunger and warmth stats', 'Crafting with 20 recipes', 'Base building on a grid'],
+    sections: [['Survival pressure', 'What kills the player, and how fast?'], ['Crafting', 'How many recipes, and what do they unlock?']],
+    tasks: [['Player stats (hunger, warmth)', 4, 'Systems'], ['Gathering', 4, 'Systems'], ['Inventory', 4, 'Systems'], ['Crafting (first 10 recipes)', 6, 'Crafting'], ['Building on a grid', 6, 'Building'], ['Day-night cycle', 3, 'World'], ['First enemy or threat', 5, 'Enemies'], ['HUD and menus', 4, 'UI'], ['Save world state', 4, 'Core']] },
+  { id: 'party', name: 'Co-op / party', sub: 'Friends, chaos, short rounds',
+    pitch: 'A chaotic co-op party game where 2-4 friends run a collapsing kebab shop.', loop: 'Join a round, work together under pressure, fail funny, play the next round.',
+    feats: ['2-4 players', '6 short levels', 'Physics-driven chaos'],
+    sections: [['Players', 'Local, online or both? How do friends join?'], ['Round structure', 'How long is a round, and what makes it end?']],
+    tasks: [['Player controller and physics', 5, 'Core'], ['Local multiplayer input', 3, 'Multiplayer'], ['Online lobby and session', 10, 'Multiplayer'], ['Round flow and scoring', 3, 'Core'], ['First 3 levels', 8, 'Levels'], ['Menus and lobby UI', 4, 'UI'], ['Playtest build', 2, 'Release']] },
+  { id: 'other', name: 'Other', sub: 'Start from a blank outline',
+    pitch: 'One or two sentences: what is the game and why is it interesting?', loop: 'What does the player do again and again?',
+    feats: ['Feature one', 'Feature two', 'Feature three'], sections: [], tasks: [] }
+];
+function tplById(id) { return TEMPLATES.find(function (t) { return t.id === id; }) || TEMPLATES[TEMPLATES.length - 1]; }
+function buildGdd(t, a) {
+  var feats = strs(String(a.feats || '').split(/\n|,(?=\s)/), 12);
+  var L = ['Pitch', a.pitch || '(' + t.pitch + ')', '', 'Core loop', a.loop || '(' + t.loop + ')', '', 'Key features'];
+  (feats.length ? feats : t.feats.map(function (f) { return '(' + f + ')'; })).forEach(function (f) { L.push('- ' + f.replace(/^[-•*]\s*/, '')); });
+  t.sections.forEach(function (sec) { L.push('', sec[0], '(' + sec[1] + ')'); });
+  L.push('', 'Art', '(Art style, palette, who makes the assets)', '', 'First playable', '(The smallest build that proves the core loop)', '', 'Team and timeline', (a.team || 1) + ' developer' + ((a.team || 1) > 1 ? 's' : '') + '. Target release ' + fmtDate(a.release) + '.');
+  return L.join('\n');
+}
+
+/* ---------- release dates ---------- */
+var DAY = 86400000;
+function today0() { var d = new Date(); d.setHours(0, 0, 0, 0); return d; }
+function isoDate(d) { var z = new Date(d.getTime() - d.getTimezoneOffset() * 60000); return z.toISOString().slice(0, 10); }
+function plusMonths(m) { var d = today0(); d.setMonth(d.getMonth() + Math.round(m)); return isoDate(d); }
+function parseIso(s) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(s || '')); return m ? new Date(+m[1], +m[2] - 1, +m[3]) : null; }
+function releaseOf(p) { return parseIso(p.release) || parseIso(plusMonths(p.months || 12)); }
+function monthsUntil(d) { return Math.max(0.5, Math.round(((d - today0()) / DAY / 30.4) * 2) / 2); }
+function openDays(p) { return p.tasks.filter(function (t) { return t.col === 'todo' || t.col === 'doing'; }).reduce(function (s, t) { return s + (Number(t.days) || 0); }, 0); }
+function forecast(p, extraWeeks) {
+  var left = openDays(p), team = Math.max(1, Number(p.team) || 1);
+  var weeks = left / (4 * teamEff(team)) + (extraWeeks || 0);
+  return { left: left, weeks: weeks, date: new Date(today0().getTime() + Math.ceil(weeks * 7) * DAY) };
+}
+function relStatus(p, f) {
+  var rel = releaseOf(p), diff = (f.date - rel) / DAY / 7;
+  if (!f.left && !f.weeks) return { cls: 'warn', text: 'No open tasks' };
+  if (diff > 0.5) return { cls: 'bad', text: Math.ceil(diff) + ' wk late' };
+  if (diff > -2) return { cls: 'warn', text: 'Tight' };
+  return { cls: 'ok', text: 'On track' };
+}
+function shortDate(d) { try { return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }); } catch (e) { return isoDate(d); } }
+
+/* ---------- wizard ---------- */
+var wiz = { tpl: 'platformer' };
+function openWizard() { renderWizard(); $('wizard').hidden = false; var n = $('w-name'); if (n) n.focus(); }
+function closeWizard() { $('wizard').hidden = true; }
+function renderWizard() {
+  var t = tplById(wiz.tpl);
+  $('wiz-form').innerHTML =
+    '<p class="note" style="margin:0">Answer a few questions. Veta writes the first GDD draft, a starter task list and a report card. You can change everything later.</p>' +
+    field('w-name', 'Game name', '<input class="input" id="w-name" required maxlength="80" placeholder="e.g. Ember Hollow">') +
+    '<fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:8px"><legend class="hint" style="margin-bottom:8px">Genre (picks a GDD template and typical tasks)</legend><div class="tpl-grid">' +
+      TEMPLATES.map(function (x) { return '<label class="tpl"><input type="radio" name="w-tpl" value="' + x.id + '"' + (x.id === wiz.tpl ? ' checked' : '') + '><b>' + x.name + '</b><span>' + x.sub + '</span></label>'; }).join('') +
+    '</div></fieldset>' +
+    '<div class="wiz-two">' +
+      field('w-team', 'Team size', '<input class="input" id="w-team" type="number" min="1" max="200" value="1">') +
+      field('w-release', 'Target release date', '<input class="input" id="w-release" type="date" value="' + plusMonths(9) + '" min="' + isoDate(today0()) + '">') +
+    '</div>' +
+    field('w-pitch', 'Pitch, in one or two sentences', '<textarea class="textarea" id="w-pitch" rows="2" maxlength="400" placeholder="' + esc(t.pitch) + '"></textarea>') +
+    field('w-loop', 'Core loop: what does the player do again and again?', '<input class="input" id="w-loop" maxlength="240" placeholder="' + esc(t.loop) + '">') +
+    field('w-feats', 'Key features, one per line (optional)', '<textarea class="textarea" id="w-feats" rows="3" maxlength="800" placeholder="' + esc(t.feats.join('\n')) + '"></textarea>') +
+    (t.tasks.length ? '<label class="check"><input type="checkbox" id="w-tasks" checked><span>Add the typical first-playable tasks for a ' + esc(t.name.toLowerCase()) + ' game (' + t.tasks.length + ' tasks)</span></label>' : '') +
+    '<div class="row" style="justify-content:flex-end"><button class="btn ghost" type="button" id="wiz-cancel">Cancel</button><button class="btn primary" type="submit">Create project</button></div>';
+}
+function wizardCreate() {
+  var t = tplById(wiz.tpl);
+  var name = ($('w-name').value || '').trim();
+  if (!name) { $('w-name').focus(); return; }
+  var team = Math.round(num($('w-team').value, 1, 200, 1));
+  var rel = parseIso($('w-release').value) || parseIso(plusMonths(9));
+  var a = { pitch: ($('w-pitch').value || '').trim(), loop: ($('w-loop').value || '').trim(), feats: $('w-feats').value || '', team: team, release: rel };
+  var np = blankProject(name);
+  np.genre = t.id === 'other' ? '' : t.name; np.team = team; np.release = isoDate(rel); np.months = monthsUntil(rel); np.template = t.id;
+  np.gdd = buildGdd(t, a);
+  var wantTasks = $('w-tasks') ? $('w-tasks').checked : false;
+  np.tasks = wantTasks ? t.tasks.map(function (x) { return { id: uid(), title: x[0], days: x[1], system: x[2], col: 'todo' }; }) : [];
+  np.report = quickReport(np);
+  store.projects.push(np); store.current = np.id; store.view = 'home'; ui.scopeResult = null; ui.scopeIdea = '';
+  save(); closeWizard(); renderAll(); toast('Project created. Next: fill in the GDD sections in brackets.');
+}
+
+/* ---------- quick engine (works without AI) ---------- */
+var SYSDEFS = [
+  { key: 'multiplayer', name: 'Online multiplayer', days: 12, heavy: true, kw: ['multiplayer', 'co-op', 'coop', 'online', 'pvp', 'lobby', 'matchmaking', 'çok oyunculu', 'cok oyunculu', 'eşli', 'netcode'] },
+  { key: 'openworld', name: 'Open world', days: 20, heavy: true, kw: ['open world', 'open-world', 'huge map', 'sandbox world', 'massive world', 'açık dünya', 'acik dunya'] },
+  { key: 'combat', name: 'Combat', days: 10, kw: ['combat', 'fight', 'boss', 'weapon', 'shooter', 'shoot', 'dövüş', 'savaş', 'silah', 'ateş'] },
+  { key: 'procedural', name: 'Procedural levels', days: 8, kw: ['procedural', 'roguelike', 'roguelite', 'randomly generated', 'random levels', 'prosedürel', 'rastgele'] },
+  { key: 'crafting', name: 'Crafting', days: 8, kw: ['craft', 'zanaat', 'üretim sistemi'] },
+  { key: 'building', name: 'Base building', days: 8, kw: ['base building', 'base-building', 'building system', 'construction', 'city builder', 'üs kurma', 'inşa'] },
+  { key: 'quests', name: 'Quests and story', days: 8, kw: ['quest', 'story', 'narrative', 'cutscene', 'görev', 'hikaye', 'hikâye', 'senaryo'] },
+  { key: 'dialogue', name: 'Characters and dialogue', days: 7, kw: ['dialogue', 'villager', 'npc', 'companion', 'romance', 'diyalog', 'replik'] },
+  { key: 'progression', name: 'Progression', days: 6, kw: ['skill tree', 'progression', 'level up', 'talent', 'upgrade', 'yetenek', 'yükseltme', 'seviye atla'] },
+  { key: 'inventory', name: 'Inventory and items', days: 5, kw: ['inventory', 'loot', 'equipment', 'items', 'envanter', 'eşya', 'ganimet'] },
+  { key: 'enemies', name: 'Enemy AI', days: 6, kw: ['enemy', 'enemies', 'düşman'] },
+  { key: 'economy', name: 'Economy and shop', days: 5, kw: ['shop', 'economy', 'trading', 'currency', 'ekonomi', 'dükkan', 'para birimi', 'ticaret'] },
+  { key: 'farming', name: 'Farming and survival', days: 7, kw: ['farm', 'season', 'survival', 'hunger', 'çiftlik', 'mevsim', 'hayatta kal', 'açlık'] },
+  { key: 'world', name: 'Day-night and weather', days: 4, kw: ['day-night', 'day night', 'weather', 'gece-gündüz', 'gece gündüz', 'hava durumu'] },
+  { key: 'vehicles', name: 'Vehicles', days: 8, kw: ['racing', 'vehicle', 'drift', 'driving', 'araç', 'yarış', 'araba'] },
+  { key: 'puzzle', name: 'Puzzle logic', days: 5, kw: ['puzzle', 'bulmaca'] },
+  { key: 'physics', name: 'Physics', days: 5, kw: ['physics', 'ragdoll', 'fizik'] },
+  { key: 'characters', name: 'Playable characters', days: 6, kw: ['playable character', 'characters with', 'karakter seç', 'oynanabilir karakter'] },
+  { key: 'minigame', name: 'Mini-game', days: 6, kw: ['mini-game', 'minigame', 'mini game', 'mini oyun', 'fishing', 'balık'] }
+];
+var SMALLER = {
+  multiplayer: 'Ship single-player first and add online co-op in an update, or start with local co-op only.',
+  openworld: 'Use a few connected hand-made zones instead of one open map.',
+  combat: 'Start with one weapon type and one enemy, and make that feel great.',
+  procedural: 'Hand-make 10-15 rooms and shuffle their order instead of full generation.',
+  crafting: 'Offer a short fixed recipe list (5-8 items) instead of a free crafting system.',
+  building: 'Allow placing a few prefab pieces on fixed spots instead of free building.',
+  quests: 'Write one short story arc with 3-5 quests, and grow it after launch.',
+  dialogue: 'Use short barks and 2-3 key conversations instead of branching dialogue.',
+  progression: 'Use a short linear upgrade list instead of a full skill tree.',
+  inventory: 'Use a small fixed set of slots and no item stats.',
+  economy: 'Use one currency and one shop with a fixed stock.',
+  farming: 'Start with 3-4 crops and one season.',
+  vehicles: 'Add one vehicle with simple arcade handling.',
+  minigame: 'Park the mini-game until after launch; it is outside the core loop.',
+  characters: 'Launch with one character and add more in updates.'
+};
+function lowerTr(t) { return String(t || '').replace(/İ/g, 'i').toLowerCase(); }
+function detect(text) { var t = lowerTr(text); return SYSDEFS.filter(function (d) { return d.kw.some(function (k) { return t.indexOf(k) >= 0; }); }); }
+function teamEff(team) { return 1 + (Math.max(1, team) - 1) * 0.7; }
+function hasAny(t, list) { return list.some(function (k) { return t.indexOf(k) >= 0; }); }
+function stripPlaceholders(text) {
+  var ls = String(text || '').split('\n'), out = [];
+  var ph = function (l) { return /^\s*(?:[-•*]\s*)?\(.*\)\s*$/.test(l || ''); };
+  for (var i = 0; i < ls.length; i++) {
+    if (ph(ls[i])) continue;
+    if (ls[i].trim() && ls[i].trim().length < 40 && !/[.:!?]$/.test(ls[i].trim()) && ph(ls[i + 1])) continue;
+    out.push(ls[i]);
+  }
+  return out.join('\n');
+}
+function quickReport(p) {
+  var raw = stripPlaceholders(p.gdd), t = lowerTr(raw);
+  var words = (t.match(/[a-z0-9çğıöşü']+/g) || []).length;
+  var found = detect(raw), major = found.length;
+  var team = Math.max(1, Number(p.team) || 1), months = parseIso(p.release) ? monthsUntil(parseIso(p.release)) : Math.max(0.5, Number(p.months) || 12);
+  var buildDays = 4 + 5 + 3 + found.reduce(function (s, d) { return s + d.days; }, 0);
+  var ratio = (buildDays * 2.5) / (months * 20 * teamEff(team) * 0.6);
+  var hasLoop = hasAny(t, ['core loop', 'gameplay loop', 'loop', 'çekirdek döngü', 'oyun döngüsü', 'döngü']);
+  var hasArt = hasAny(t, ['art', 'style', 'palette', 'low-poly', 'pixel', 'görsel', 'sanat', 'stil']);
+  var hasPitch = hasAny(t, ['pitch', 'özet', 'konsept', 'concept']);
+  var hasMilestone = hasAny(t, ['milestone', 'first playable', 'vertical slice', 'demo', 'prototype', 'prototip', 'ilk oynanabilir', 'dikey dilim']);
+  var q = 2 + (words >= 40 ? 1 : 0) + (words >= 120 ? 1 : 0) + (words >= 250 ? 1 : 0) + (hasLoop ? 1.5 : 0) + (hasArt ? 0.5 : 0) + (hasPitch ? 0.5 : 0) + (hasMilestone ? 0.5 : 0) + Math.min(1.5, major * 0.4);
+  var quality = half(clamp(q, 1, 9));
+  var readiness = half(clamp(10 - 9 * ratio, 1, 9.5));
+  var strengths = [];
+  if (hasLoop) strengths.push('The core loop is described');
+  if (major > 0 && major <= 3) strengths.push('Focused scope: ' + major + ' major system' + (major === 1 ? '' : 's'));
+  if (hasArt) strengths.push('Art direction is stated');
+  if (hasMilestone) strengths.push('A first milestone is mentioned');
+  var risks = [];
+  if (major / team >= 3) risks.push(major + ' major systems for ' + (team === 1 ? 'a solo developer' : 'a team of ' + team));
+  found.forEach(function (d) { if (d.key === 'multiplayer') risks.push(team === 1 ? 'Online multiplayer is very heavy for a solo developer' : 'Online multiplayer adds networking and testing work'); if (d.key === 'openworld') risks.push('Open worlds need content at scale'); });
+  if (found.filter(function (d) { return ['quests', 'dialogue', 'procedural', 'openworld', 'characters'].indexOf(d.key) >= 0; }).length >= 2) risks.push('High content requirement: levels, characters, quests or dialogue');
+  if (ratio > 1) risks.push('Estimated effort is larger than the ' + months + '-month timeline');
+  else if (ratio > 0.55) risks.push('The timeline is tight for this scope');
+  if (words < 60) risks.push('The GDD is short, so this estimate is rough');
+  var missing = [];
+  if (!hasLoop) missing.push('A one-sentence core loop');
+  if (!hasMilestone) missing.push('What the first playable build must include');
+  if (!hasArt) missing.push('Art style and asset plan');
+  if (major === 0) missing.push('The main mechanics (combat, crafting, puzzles...)');
+  var loop = '';
+  var lines = raw.split('\n');
+  for (var i = 0; i < lines.length; i++) { if (/core loop|çekirdek döngü|oyun döngüsü/i.test(lines[i])) { var rest = lines[i].replace(/^[^:]*:\s*/, '').trim(); loop = rest && rest !== lines[i].trim() ? rest : (lines[i + 1] || '').trim(); break; } }
+  if (/^\(/.test(loop)) loop = '';
+  var lvl = major === 0 ? 'UNKNOWN' : ratio > 1 ? 'VERY HIGH' : ratio > 0.55 ? 'HIGH' : ratio > 0.3 ? 'MEDIUM' : 'LOW';
+  return { at: Date.now(), example: false, quick: true, quality: quality, readiness: readiness, coreLoop: loop.slice(0, 240), strengths: strengths.slice(0, 3), risks: risks.slice(0, 5), missing: missing.slice(0, 3), riskLevel: lvl, buildMonths: Math.round(ratio * months * 10) / 10 };
+}
+function quickTasks(p) {
+  var found = detect(stripPlaceholders(p.gdd));
+  var list = [{ title: 'Player controller and camera', days: 4, system: 'Core' }];
+  found.forEach(function (d) { list.push({ title: d.name + ': first working version', days: Math.max(2, Math.round(d.days * 0.6)), system: d.name.split(' ')[0] }); });
+  list.push({ title: 'Core loop playable end to end', days: 3, system: 'Core' });
+  list.push({ title: 'Basic menus and UI', days: 3, system: 'UI' });
+  list.push({ title: 'Save and load', days: 2, system: 'Core' });
+  list.push({ title: 'First playtest build', days: 2, system: 'Release' });
+  return list.map(function (t) { return { id: uid(), title: t.title, days: t.days, system: t.system, col: 'todo' }; });
+}
+function quickScope(p, idea) {
+  var inIdea = detect(idea), inGdd = detect(stripPlaceholders(p.gdd)), team = Math.max(1, Number(p.team) || 1);
+  var gddKeys = inGdd.map(function (d) { return d.key; });
+  var fresh = inIdea.filter(function (d) { return gddKeys.indexOf(d.key) < 0; });
+  var known = inIdea.filter(function (d) { return gddKeys.indexOf(d.key) >= 0; });
+  var days = fresh.reduce(function (s, d) { return s + d.days; }, 0) + known.reduce(function (s, d) { return s + d.days * 0.35; }, 0);
+  if (!inIdea.length) days = 5;
+  var weeks = Math.max(0, Math.round((days * 1.6) / (5 * teamEff(team))));
+  var rep = p.report && !p.report.example ? p.report : quickReport(p);
+  var tight = rep.riskLevel === 'HIGH' || rep.riskLevel === 'VERY HIGH';
+  var heavy = fresh.some(function (d) { return d.heavy; });
+  var v = heavy || days >= 10 ? 'OUT OF SCOPE' : (days >= 5 || tight) ? 'RISKY' : 'IN SCOPE';
+  var reasoning = fresh.length ? 'Adds new system' + (fresh.length > 1 ? 's' : '') + ' (' + fresh.map(function (d) { return d.name; }).join(', ') + ') that the GDD does not have yet.' :
+    known.length ? 'Extends ' + known.map(function (d) { return d.name.toLowerCase(); }).join(' and ') + ', which is already in the GDD.' :
+    'Veta could not match this to a known system, so it assumes about a week of work.';
+  if (tight) reasoning += ' The current scope is already ' + rep.riskLevel.toLowerCase() + ' risk, so every extra week counts.';
+  var past = p.decisions.filter(function (d) { return inIdea.some(function (s) { return detect(d.text).some(function (x) { return x.key === s.key; }); }); })[0];
+  if (past) reasoning += ' Earlier decision: "' + past.text + '".';
+  var alt = (fresh[0] && SMALLER[fresh[0].key]) || (known[0] && SMALLER[known[0].key]) || 'Build the smallest version that tests the idea in one day, then decide.';
+  return { id: uid(), at: Date.now(), quick: true, idea: idea, verdict: v, delayWeeks: weeks, touches: inIdea.map(function (d) { return d.name; }).slice(0, 5), reasoning: reasoning, alternative: alt };
+}
+function srcTag(quick) { return quick ? '<span class="src" title="Rule-based estimate made in your browser">Quick estimate</span>' : '<span class="src ai">AI review</span>'; }
+function toast(text) { var t = $('toast'); if (!t) return; t.textContent = text; t.hidden = false; clearTimeout(toast._t); toast._t = setTimeout(function () { t.hidden = true; }, 2600); }
+
+/* ---------- overview ---------- */
+function viewHome() {
+  var p = P();
+  topbar('Overview', p.genre || 'Your game at a glance', '<button class="btn ghost sm" type="button" data-act="export">Export as Markdown</button><button class="btn primary sm" type="button" data-act="wizard">New game</button>');
+  var open = p.tasks.filter(function (t) { return t.col === 'todo' || t.col === 'doing'; });
+  var left = open.reduce(function (s, t) { return s + (Number(t.days) || 0); }, 0);
+  var done = p.tasks.filter(function (t) { return t.col === 'done'; }).reduce(function (s, t) { return s + (Number(t.days) || 0); }, 0);
+  var team = Math.max(1, Number(p.team) || 1);
+  var weeks = Math.ceil(left / (5 * teamEff(team)));
+  var parked = p.tasks.filter(function (t) { return t.col === 'backlog'; }).length;
+  var r = p.report;
+  var gddOk = stripPlaceholders(p.gdd).trim().split(/\s+/).length >= 40;
+  var steps = [
+    { done: gddOk, t: 'Write the GDD', d: 'Pitch, core loop, features, team and timeline. Plain text is fine.', go: 'gdd', b: 'Open GDD' },
+    { done: !!r, t: 'Get a report card', d: 'Scores how clear and buildable the design is.', go: 'gdd', b: 'Analyze' },
+    { done: p.tasks.some(function (t) { return t.col !== 'backlog'; }), t: 'Plan the first playable', d: 'Turn the GDD into estimated tasks.', go: 'tasks', b: 'Task board' },
+    { done: p.checks.length > 0, t: 'Run an idea through Scope Guard', d: 'Check a new feature before it costs you weeks.', go: 'scope', b: 'Scope Guard' },
+    { done: p.decisions.length > 0, t: 'Log a decision', d: 'Veta remembers why you cut or kept things.', go: 'decisions', b: 'Decision log' }
+  ];
+  var nextIdx = steps.findIndex(function (x) { return !x.done; });
+  var doneCount = steps.filter(function (x) { return x.done; }).length;
+  var banner = provider() ? '' :
+    '<div class="banner"><div class="bt"><b>Veta works without AI.</b><span>Reports, tasks and Scope Guard give quick estimates right away. Connect a free Groq key for producer chat and deeper AI reviews.</span></div><button class="btn primary sm" type="button" id="ai-status-2" data-act="open-settings">Connect AI</button></div>';
+  var lvl = r ? String(r.riskLevel || 'UNKNOWN') : '';
+  var fc = forecast(p), st = relStatus(p, fc);
+  var exampleCta = p.example ? '<div class="banner" style="background:var(--surface);border-color:var(--line-strong)"><div class="bt"><b>This is an example project.</b><span>Start your own game in about a minute: pick a genre, answer 3 questions, get a GDD draft, tasks and a release forecast.</span></div><button class="btn light sm" type="button" data-act="wizard">Start your game</button></div>' : '';
+  $('view').innerHTML =
+    '<div class="ov">' + exampleCta + banner +
+      '<div class="ov-grid">' +
+        '<div class="ov-card"><span class="k">Production readiness</span>' + (r ? '<span class="v">' + esc(r.readiness) + '<small> /10</small></span><span class="s">GDD quality ' + esc(r.quality) + '/10 · <span class="pill ' + lvl.split(' ')[0] + '">' + esc(lvl) + '</span></span>' : '<span class="v">–</span><span class="s">No report yet</span>') + '</div>' +
+        '<div class="ov-card"><span class="k">Target release</span><span class="v" style="font-size:24px">' + esc(shortDate(releaseOf(p))) + '</span><span class="s">Open tasks finish around ' + esc(shortDate(fc.date)) + ' <span class="status ' + st.cls + '">' + st.text + '</span></span></div>' +
+        '<div class="ov-card"><span class="k">Open work</span><span class="v">' + left + '<small> days</small></span><span class="s">' + (left + done ? Math.round(done / (left + done) * 100) : 0) + '% done · ' + parked + ' idea' + (parked === 1 ? '' : 's') + ' parked</span></div>' +
+      '</div>' +
+      '<div class="ov-two">' +
+        '<section class="panel" aria-label="Next steps"><div class="panel-head"><span class="label">Next steps</span><span class="tag">' + doneCount + '/' + steps.length + '</span></div><ol class="steps">' +
+          steps.map(function (x, i) { return '<li class="' + (x.done ? 'done' : i === nextIdx ? 'next' : '') + '"><span class="ck">' + (x.done ? '✓' : (i + 1)) + '</span><span class="st"><b>' + x.t + '</b><span>' + x.d + '</span></span><button class="btn ' + (i === nextIdx ? 'primary' : 'ghost') + ' sm" type="button" data-view="' + x.go + '">' + x.b + '</button></li>'; }).join('') +
+        '</ol></section>' +
+        '<section class="panel" aria-label="Latest decisions"><div class="panel-head"><span class="label">Latest decisions</span><button class="btn ghost sm" type="button" data-view="decisions">All</button></div>' +
+          (p.decisions.length ? p.decisions.slice(0, 4).map(function (d) { return '<div class="dec-item"><div class="d-main"><div class="d-text">' + esc(d.text) + '</div>' + (d.why ? '<div class="d-why">' + esc(d.why) + '</div>' : '') + '</div></div>'; }).join('') : '<div class="empty">No decisions yet.</div>') +
+        '</section>' +
+      '</div>' +
+    '</div>';
+}
+function exportMd() {
+  var p = P(), r = p.report, L = [];
+  L.push('# ' + (p.name || 'Untitled game'));
+  L.push(''); L.push((p.genre ? p.genre + ' · ' : '') + 'Team of ' + (p.team || 1) + ' · Target release ' + p.release + ' · Forecast ' + isoDate(forecast(p).date));
+  if (r) {
+    L.push(''); L.push('## Report card');
+    L.push('- GDD quality: ' + r.quality + '/10'); L.push('- Production readiness: ' + r.readiness + '/10'); L.push('- Scope risk: ' + r.riskLevel);
+    if (r.coreLoop) L.push('- Core loop: ' + r.coreLoop);
+    [['Strengths', r.strengths], ['Risks', r.risks], ['Add to the GDD', r.missing]].forEach(function (g) { var it = strs(g[1], 8); if (it.length) { L.push(''); L.push('### ' + g[0]); it.forEach(function (x) { L.push('- ' + x); }); } });
+  }
+  L.push(''); L.push('## Tasks');
+  COLS.forEach(function (c) { var it = p.tasks.filter(function (t) { return t.col === c.id; }); if (it.length) { L.push(''); L.push('### ' + c.name); it.forEach(function (t) { L.push('- [' + (c.id === 'done' ? 'x' : ' ') + '] ' + t.title + ' (' + t.days + 'd)'); }); } });
+  if (p.decisions.length) { L.push(''); L.push('## Decisions'); p.decisions.forEach(function (d) { L.push('- ' + d.text + (d.why ? ' — ' + d.why : '')); }); }
+  L.push(''); L.push('## GDD'); L.push(''); L.push(p.gdd || '(empty)');
+  L.push(''); L.push('---'); L.push('Exported from Veta, the Game Studio OS.');
+  try {
+    var blob = new Blob([L.join('\n')], { type: 'text/markdown' }), url = URL.createObjectURL(blob), a = document.createElement('a');
+    a.href = url; a.download = (p.name || 'veta-project').replace(/[^\w\-]+/g, '-').toLowerCase() + '.md'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000); toast('Project exported as Markdown.');
+  } catch (e) { toast('Export failed in this browser.'); }
+}
+
+/* ---------- rendering: shell ---------- */
+function renderAll() { renderProjects(); renderNav(); renderStatus(); renderView(); }
+
+function renderProjects() {
+  var sel = $('proj-select');
+  sel.innerHTML = store.projects.map(function (p) { return '<option value="' + p.id + '"' + (p.id === store.current ? ' selected' : '') + '>' + esc(p.name || 'Untitled game') + '</option>'; }).join('');
+}
+function renderNav() {
+  var p = P();
+  var counts = { tasks: p.tasks.filter(function (t) { return t.col !== 'done' && t.col !== 'backlog'; }).length, decisions: p.decisions.length };
+  $('nav').innerHTML = VIEWS.map(function (v) {
+    return '<button type="button" data-view="' + v.id + '"' + (store.view === v.id ? ' aria-current="page"' : '') + '>' + icon(v.icon) + '<span>' + v.name + '</span>' + (counts[v.id] != null ? '<span class="count">' + counts[v.id] + '</span>' : '') + '</button>';
+  }).join('');
+}
+function renderStatus() {
+  var pv = provider();
+  var t = pv === 'veta' ? ['Veta AI on', 'Free demo · ' + modelLabel()] : pv === 'groq' ? ['Groq connected', 'Your key · ' + modelLabel()] : pv === 'claude' ? ['Claude connected', 'Runs on your Claude account'] : ['AI not connected', 'Add a free Groq key'];
+  $('ai-status').innerHTML = '<span class="dot ' + (pv ? 'on' : 'off') + '"></span><span class="t"><b>' + t[0] + '</b><span>' + esc(t[1]) + '</span></span>';
+  $('ai-status').setAttribute('aria-label', t[0] + '. Open AI connection settings');
+}
+function topbar(title, sub, right) {
+  var p = P();
+  $('topbar').innerHTML = '<div><h1>' + esc(title) + '</h1><div class="sub">' + esc(p.name || 'Untitled game') + (p.example ? ' <span class="chip example">Example project</span>' : '') + (sub ? ' · ' + esc(sub) : '') + '</div></div><div class="grow"></div>' + (right || '');
+}
+function renderView() {
+  var v = store.view;
+  if (v === 'gdd') return viewGdd();
+  if (v === 'tasks') return viewTasks();
+  if (v === 'scope') return viewScope();
+  if (v === 'decisions') return viewDecisions();
+  if (v === 'home') return viewHome();
+  return viewChat();
+}
+function msgLine(key) { var m = ui.msg[key]; return m ? '<div class="msg' + (m.err ? ' err' : '') + '" role="status">' + esc(m.text) + '</div>' : ''; }
+
+/* ---------- chat ---------- */
+function viewChat() {
+  var p = P();
+  topbar('Producer chat', 'Knows your GDD, tasks and decisions', '<button class="btn ghost sm" type="button" data-act="clear-chat"' + (p.chat.length ? '' : ' disabled') + '>Clear chat</button>');
+  var agent = store.agent || 'producer';
+  var thread = p.chat.length ? p.chat.map(function (m, i) { return msgHtml(m, i); }).join('') :
+    '<div><div class="label" style="margin-bottom:8px">Start with one of these</div><div class="starters">' + STARTERS.map(function (s) { return '<button type="button" data-starter="' + esc(s) + '"' + (provider() ? '' : ' disabled style="opacity:.55;cursor:default"') + '>' + esc(s) + '</button>'; }).join('') + '</div></div>';
+  $('view').innerHTML =
+    '<div class="chat">' +
+      '<div class="agents" role="group" aria-label="Who answers">' + AGENTS.map(function (a) { return '<button type="button" data-agent="' + a.id + '" aria-pressed="' + (a.id === agent) + '">' + a.name + '</button>'; }).join('') + '</div>' +
+      '<div class="thread" id="thread" aria-live="polite">' + thread + '</div>' +
+      (!provider() ? '<div class="nochat"><b style="font-weight:500">Chat needs an AI connection.</b><span class="note">Everything else in Veta works without one. Connect a free Groq key to talk to the producer, designer, tech lead or marketing lead about this project.</span><div class="row"><button class="btn primary sm" type="button" data-act="open-settings">Connect AI</button><button class="btn ghost sm" type="button" data-view="scope">Try Scope Guard instead</button></div></div>' :
+      '<div class="composer">' +
+        '<label class="label" for="chat-input" style="padding:0 6px">Message the ' + esc(AGENTS.find(function (a) { return a.id === agent; }).name.toLowerCase()) + '</label>' +
+        '<textarea id="chat-input" rows="2" placeholder="Ask about scope, design, tech or launch. Enter to send, Shift+Enter for a new line."></textarea>' +
+        '<div class="bar"><span class="note">' + (provider() === 'veta' ? 'Free demo AI · answers use this project\'s context.' : provider() ? 'Answers use this project\'s context.' : 'Connect an AI to start chatting.') + '</span>' +
+          (ui.busy.chat ? '<button class="btn sm" type="button" data-act="stop" data-key="chat">Stop</button>' : '<button class="btn primary sm" type="button" data-act="send">Send</button>') +
+        '</div>' + msgLine('chat') +
+      '</div>') +
+    '</div>';
+  var th = $('thread'); th.scrollTop = th.scrollHeight;
+}
+function msgHtml(m, i) {
+  var a = AGENTS.find(function (x) { return x.id === m.agent; });
+  var who = m.role === 'user' ? 'You' : (a ? a.name : 'Veta');
+  var body = m.role === 'user' ? '<p>' + esc(m.content).replace(/\n/g, '<br>') + '</p>' : (m.content ? md(m.content) : '<span class="thinking">Thinking…</span>');
+  return '<div class="m ' + m.role + '"><div class="who" aria-hidden="true">' + (m.role === 'user' ? 'YOU' : 'V') + '</div><div class="body"><div class="meta">' + esc(who) + '</div><div id="mb-' + i + '">' + body + '</div></div></div>';
+}
+function sendChat(text) {
+  var p = P();
+  text = String(text || '').trim();
+  if (!text || ui.busy.chat) return;
+  if (!provider()) { ui.msg.chat = { err: true, text: errText({ code: 'nokey' }) }; viewChat(); openSettings(); return; }
+  var agent = AGENTS.find(function (a) { return a.id === (store.agent || 'producer'); });
+  var history = p.chat.slice(-12).map(function (m) { return { role: m.role, content: m.content }; }).filter(function (m) { return m.content; });
+  p.chat.push({ role: 'user', content: text });
+  var reply = { role: 'assistant', agent: agent.id, content: '' };
+  p.chat.push(reply);
+  if (p.chat.length > 60) p.chat = p.chat.slice(-60);
+  var idx = p.chat.length - 1;
+  ui.busy.chat = true; ui.msg.chat = null; ui.ctl.chat = new AbortController();
+  save(); viewChat();
+  var system = 'You are Veta, an AI production assistant for indie game developers. In this conversation you act as ' + agent.role + '. ' +
+    'Be direct, specific and practical. Prefer short answers with concrete next steps. Use the project context below and refer to its systems, tasks and decisions by name. ' +
+    'If the developer is about to grow the scope, say so plainly. Reply in the language the developer writes in. Format with short paragraphs, "-" bullet lists and **bold** for key terms. No tables.\n\n' + projectContext(p);
+  var msgs = [{ role: 'system', content: system }].concat(history).concat([{ role: 'user', content: text }]);
+  aiChat(msgs, function (t) {
+    reply.content = t;
+    var el = $('mb-' + idx); if (el) { el.innerHTML = md(t); var th = $('thread'); if (th) th.scrollTop = th.scrollHeight; }
+  }, ui.ctl.chat.signal).then(function (t) {
+    reply.content = t || reply.content;
+  }).catch(function (e) {
+    if (!reply.content) p.chat.splice(idx, 1);
+    ui.msg.chat = { err: e && e.code !== 'cancelled', text: errText(e) };
+  }).then(function () {
+    ui.busy.chat = false; save(); if (store.view === 'chat' && P() === p) viewChat();
+  });
+}
+
+/* ---------- GDD ---------- */
+function viewGdd() {
+  var p = P(), r = p.report;
+  topbar('GDD & report', 'Write the design, then score it', '');
+  var report;
+  if (ui.busy.gdd) {
+    report = '<div class="empty">Veta is reading your GDD. This can take up to a minute.</div>';
+  } else if (!r) {
+    report = '<div class="empty">No report yet. Write your GDD on the left, then press Analyze.</div>';
+  } else {
+    var lvl = String(r.riskLevel || 'UNKNOWN');
+    report =
+      '<div class="scores">' +
+        scoreTile('GDD quality', r.quality, 'var(--accent-soft)') +
+        scoreTile('Production readiness', r.readiness, '#FFB454') +
+      '</div>' +
+      (r.coreLoop ? '<div class="rc-block"><div class="label">Core loop, as Veta reads it</div><div>' + esc(r.coreLoop) + '</div></div>' : '') +
+      rcList('Strengths', r.strengths, 'var(--ok)') +
+      rcList('Risks', r.risks, '#FFB454') +
+      rcList('Add to the GDD', r.missing, 'var(--accent-soft)') +
+      '<div class="rc-block"><div class="row" style="align-items:center;justify-content:space-between"><span>Overall scope risk</span><span class="pill ' + lvl.split(' ')[0] + '">' + esc(lvl) + '</span></div>' +
+      '<div class="note" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' + (r.example ? 'Example report for the sample project.' : srcTag(r.quick) + 'Analyzed ' + esc(fmtDate(r.at)) + (r.buildMonths ? '. About ' + esc(r.buildMonths) + ' months of work for this team.' : '.')) + '</div></div>';
+  }
+  var del = ui.confirm === 'delete-project' ?
+    '<div class="confirm"><span>Delete this project and everything in it?</span><button class="btn danger sm" type="button" data-act="delete-project-yes">Delete</button><button class="btn ghost sm" type="button" data-act="confirm-cancel">Keep it</button></div>' :
+    '<button class="btn ghost sm" type="button" data-act="delete-project">Delete project</button>';
+  $('view').innerHTML =
+    '<div class="gdd">' +
+      '<section class="panel" aria-label="Game design document">' +
+        '<div class="meta-grid">' +
+          field('p-name', 'Game name', '<input class="input" id="p-name" value="' + esc(p.name) + '">') +
+          field('p-genre', 'Genre', '<input class="input" id="p-genre" value="' + esc(p.genre) + '" placeholder="e.g. Cozy farming sim">') +
+          field('p-team', 'Team size', '<input class="input" id="p-team" type="number" min="1" max="200" value="' + esc(p.team) + '">') +
+          field('p-release', 'Target release', '<input class="input" id="p-release" type="date" value="' + esc(p.release) + '">') +
+        '</div>' +
+        (!String(p.gdd || '').trim() ? '<div class="tpl-chips"><span class="hint" style="align-self:center;margin-right:4px">Start from a template:</span>' + TEMPLATES.map(function (x) { return '<button type="button" data-tpl="' + x.id + '">' + x.name + '</button>'; }).join('') + '</div>' : '') +
+        '<label class="label" for="p-gdd" style="display:block;padding:14px 16px 0">Game design document</label>' +
+        '<textarea class="textarea gdd-text" id="p-gdd" placeholder="Pitch, core loop, key features, art style, team and timeline. Plain text is fine.">' + esc(p.gdd) + '</textarea>' +
+      '</section>' +
+      '<section class="panel" aria-label="Report card">' +
+        '<div class="panel-head"><span class="label">Report card</span>' +
+          (ui.busy.gdd ? '<button class="btn sm" type="button" data-act="stop" data-key="gdd">Stop</button>' : '<button class="btn primary sm" type="button" data-act="analyze">' + icon(I.spark, 14) + (provider() ? 'Analyze with AI' : 'Analyze GDD') + '</button>') +
+        '</div>' + (ui.msg.gdd ? '<div style="padding:12px 16px 0">' + msgLine('gdd') + '</div>' : '') +
+        report +
+      '</section>' +
+    '</div>' +
+    '<div style="margin-top:20px">' + del + '</div>';
+}
+function field(id, label, control) { return '<div class="field"><label for="' + id + '">' + label + '</label>' + control + '</div>'; }
+function scoreTile(label, v, color) {
+  var n = Number(v) || 0;
+  return '<div class="score"><span class="note">' + label + '</span><div class="n">' + esc(n) + '<span>/10</span></div><div class="bar-track"><div class="bar-fill" style="width:' + clamp(n * 10, 0, 100) + '%;background:' + color + '"></div></div></div>';
+}
+function rcList(title, items, color) {
+  items = strs(items, 8);
+  if (!items.length) return '';
+  return '<div class="rc-block"><div class="label">' + title + '</div><ul class="rc-list" style="--b:' + color + '">' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
+}
+function analyzeGdd() {
+  var p = P();
+  if (ui.busy.gdd) return;
+  if (!p.gdd.trim()) { ui.msg.gdd = { err: true, text: 'Write your GDD first. A few paragraphs is enough.' }; return viewGdd(); }
+  if (!provider()) { p.report = quickReport(p); ui.msg.gdd = { text: 'Quick estimate made in your browser. Connect an AI for a full review.' }; save(); return viewGdd(); }
+  ui.busy.gdd = true; ui.msg.gdd = null; ui.ctl.gdd = new AbortController(); viewGdd();
+  var prompt = [
+    'You are Veta, a game production planner. Review this game design document like an experienced, honest producer. Be specific to THIS game.',
+    '', projectContext(p, { noTasks: true }), '',
+    'Reply with only one JSON object in exactly this shape:',
+    '{"quality": 7.5, "readiness": 5, "coreLoop": "...", "strengths": ["..."], "risks": ["..."], "missing": ["..."], "riskLevel": "HIGH"}',
+    'Rules:',
+    '- quality: 1-10, how clear and complete the GDD is (pitch, core loop, features, scope, team, timeline). Vague or short text scores low.',
+    '- readiness: 1-10, how realistic it is to build with this team in this timeline.',
+    '- coreLoop: the core loop in one sentence, as you understand it. If none is described, say so.',
+    '- strengths: 2-3 short points. risks: 2-5 concrete production risks, one sentence each. missing: 1-3 things the GDD should add.',
+    '- riskLevel: one of LOW, MEDIUM, HIGH, VERY HIGH.',
+    '- Write all text in the same language as the GDD.'
+  ].join('\n');
+  aiJson(prompt, ui.ctl.gdd.signal).then(function (d) {
+    var lv = String(d && d.riskLevel || '').toUpperCase().replace(/_/g, ' ').trim();
+    p.report = {
+      at: Date.now(), example: false,
+      quality: half(num(d && d.quality, 1, 10, 5)), readiness: half(num(d && d.readiness, 1, 10, 5)),
+      coreLoop: String(d && d.coreLoop || '').trim(),
+      strengths: strs(d && d.strengths, 4), risks: strs(d && d.risks, 6), missing: strs(d && d.missing, 4),
+      riskLevel: ['LOW', 'MEDIUM', 'HIGH', 'VERY HIGH'].indexOf(lv) >= 0 ? lv : 'UNKNOWN'
+    };
+  }).catch(function (e) { ui.msg.gdd = { err: e && e.code !== 'cancelled', text: errText(e) }; })
+    .then(function () { ui.busy.gdd = false; save(); if (store.view === 'gdd' && P() === p) viewGdd(); });
+}
+
+/* ---------- tasks ---------- */
+function viewTasks() {
+  var p = P();
+  var open = p.tasks.filter(function (t) { return t.col === 'todo' || t.col === 'doing'; });
+  var left = open.reduce(function (s, t) { return s + (Number(t.days) || 0); }, 0);
+  var done = p.tasks.filter(function (t) { return t.col === 'done'; }).reduce(function (s, t) { return s + (Number(t.days) || 0); }, 0);
+  var team = Math.max(1, Number(p.team) || 1);
+  var fc = forecast(p), st = relStatus(p, fc);
+  var right = ui.busy.tasks ? '<button class="btn sm" type="button" data-act="stop" data-key="tasks">Stop</button>' :
+    '<button class="btn primary sm" type="button" data-act="gen-tasks">' + icon(I.spark, 14) + 'Generate from GDD</button>';
+  topbar('Task board', 'Days are for one developer. Forecast assumes about 4 focused days a week per person.', right);
+  var confirm = ui.confirm === 'gen-tasks' ?
+    '<div class="confirm" style="margin-bottom:16px"><span>Your board already has tasks. What should Veta do with the new ones?</span><button class="btn sm" type="button" data-act="gen-add">Add to the board</button><button class="btn danger sm" type="button" data-act="gen-replace">Replace open tasks</button><button class="btn ghost sm" type="button" data-act="confirm-cancel">Cancel</button></div>' : '';
+  $('view').innerHTML =
+    confirm + (ui.msg.tasks ? '<div style="margin-bottom:12px">' + msgLine('tasks') + '</div>' : '') +
+    (ui.busy.tasks ? '<div class="msg" style="margin-bottom:12px">Veta is splitting your GDD into tasks. This can take up to a minute.</div>' : '') +
+    '<div class="board-summary">' +
+      '<div class="stat"><b>' + left + 'd</b><span>Open work</span></div>' +
+      '<div class="stat"><b>' + esc(shortDate(fc.date)) + '</b><span>Forecast finish · target ' + esc(shortDate(releaseOf(p))) + ' <span class="status ' + st.cls + '">' + st.text + '</span></span></div>' +
+      '<div class="stat"><b>' + (left + done ? Math.round(done / (left + done) * 100) : 0) + '%</b><span>Done, by days</span></div>' +
+    '</div>' +
+    '<div class="board">' + COLS.map(function (c, ci) {
+      var items = p.tasks.filter(function (t) { return t.col === c.id; });
+      return '<section class="col" aria-label="' + c.name + '"><div class="col-head"><span class="label">' + c.name + '</span><span class="tag">' + items.length + '</span></div><div class="col-body">' +
+        (items.length ? items.map(function (t) {
+          return '<article class="card"><div class="title">' + esc(t.title) + '</div><div class="foot"><span class="tag">' + esc(t.days) + 'd</span>' + (t.system ? '<span class="tag">' + esc(t.system) + '</span>' : '') +
+            '<span class="acts">' +
+              (ci > 0 ? '<button class="mini" type="button" data-move="' + t.id + '" data-dir="-1" aria-label="Move ' + esc(t.title) + ' to ' + COLS[ci - 1].name + '">' + icon(I.left, 14) + '</button>' : '') +
+              (ci < COLS.length - 1 ? '<button class="mini" type="button" data-move="' + t.id + '" data-dir="1" aria-label="Move ' + esc(t.title) + ' to ' + COLS[ci + 1].name + '">' + icon(I.right, 14) + '</button>' : '') +
+              '<button class="mini" type="button" data-del-task="' + t.id + '" aria-label="Delete ' + esc(t.title) + '">' + icon(I.x, 14) + '</button>' +
+            '</span></div></article>';
+        }).join('') : '<div class="note" style="padding:6px 2px">' + (c.id === 'backlog' ? 'Ideas parked by Scope Guard land here.' : 'Nothing here.') + '</div>') +
+        '</div></section>';
+    }).join('') + '</div>' +
+    '<form class="add-task" id="add-task" autocomplete="off">' +
+      '<input class="input" id="t-title" placeholder="New task, e.g. Boss 1 attack patterns" aria-label="Task title" maxlength="140">' +
+      '<input class="input" id="t-days" type="number" min="1" max="60" value="2" aria-label="Estimated days">' +
+      '<button class="btn" type="submit">' + icon(I.plus, 14) + 'Add task</button>' +
+    '</form>';
+}
+function genTasks(mode) {
+  var p = P();
+  if (ui.busy.tasks) return;
+  if (!p.gdd.trim()) { ui.msg.tasks = { err: true, text: 'Write your GDD first, in GDD & report.' }; return viewTasks(); }
+  if (!mode && p.tasks.some(function (t) { return t.col === 'todo' || t.col === 'doing'; })) { ui.confirm = 'gen-tasks'; return viewTasks(); }
+  if (!provider()) {
+    var ql = quickTasks(p);
+    ui.confirm = null;
+    if (mode === 'replace') p.tasks = p.tasks.filter(function (t) { return t.col === 'done' || t.col === 'backlog'; });
+    p.tasks = p.tasks.concat(ql);
+    ui.msg.tasks = { text: 'Added ' + ql.length + ' starter tasks from the systems in your GDD (quick estimate). Edit or delete freely; connect an AI for a tailored plan.' };
+    save(); renderNav(); return viewTasks();
+  }
+  ui.confirm = null; ui.busy.tasks = true; ui.msg.tasks = null; ui.ctl.tasks = new AbortController(); viewTasks();
+  var prompt = [
+    'You are Veta, a game production planner. Break this game into the tasks for its FIRST PLAYABLE milestone: the smallest build that proves the core loop.',
+    '', projectContext(p, { noTasks: true }), '',
+    'Reply with only one JSON object: {"tasks": [{"title": "...", "days": 4, "system": "..."}]}',
+    'Rules: 6 to 12 tasks, in build order. title: a concrete task, under 8 words. days: realistic working days for one developer (whole number). system: the game system it belongs to, 1-2 words. Do not include tasks for features the decisions list parked or cut. Write in the same language as the GDD.'
+  ].join('\n');
+  aiJson(prompt, ui.ctl.tasks.signal).then(function (d) {
+    var list = (Array.isArray(d && d.tasks) ? d.tasks : []).slice(0, 14).map(function (t) {
+      return { id: uid(), title: String(t && t.title || '').trim().slice(0, 140), days: Math.round(num(t && t.days, 1, 60, 2)), system: String(t && t.system || '').trim().slice(0, 30), col: 'todo' };
+    }).filter(function (t) { return t.title; });
+    if (!list.length) throw { code: 'json' };
+    if (mode === 'replace') p.tasks = p.tasks.filter(function (t) { return t.col === 'done' || t.col === 'backlog'; });
+    p.tasks = p.tasks.concat(list);
+    ui.msg.tasks = { text: 'Added ' + list.length + ' tasks to To do.' };
+  }).catch(function (e) { ui.msg.tasks = { err: e && e.code !== 'cancelled', text: errText(e) }; })
+    .then(function () { ui.busy.tasks = false; save(); if (store.view === 'tasks' && P() === p) { viewTasks(); renderNav(); } });
+}
+
+/* ---------- scope guard ---------- */
+function viewScope() {
+  var p = P(), r = ui.scopeResult;
+  topbar('Scope Guard', 'Check an idea before it costs you weeks', '');
+  var result;
+  if (ui.busy.scope) result = '<div class="empty">Veta is checking the idea against your core loop.</div>';
+  else if (!r) result = '<div class="empty">Describe a feature you are tempted to add. Veta compares it with your GDD, tasks and past decisions.</div>';
+  else {
+    var cls = r.verdict.split(' ')[0];
+    result =
+      '<div class="verdict">' +
+        '<div class="row" style="align-items:center;justify-content:space-between"><span class="label">New idea</span>' + srcTag(r.quick) + '</div><div style="font-size:18px;font-weight:500;overflow-wrap:anywhere">' + esc(r.idea) + '</div>' +
+        '<div class="big"><span class="pill ' + cls + '">' + esc(r.verdict) + '</span>' + (r.delayWeeks ? '<span class="delay">+' + esc(r.delayWeeks) + ' wk</span><span class="note">estimated delay</span>' : '<span class="note">No real delay expected</span>') + '</div>' +
+        (function () { if (!r.delayWeeks) return ''; var a = forecast(p), b = forecast(p, r.delayWeeks), rel = releaseOf(p); var late = b.date > rel; return '<div class="shift"><span class="note">Forecast</span><b>' + esc(shortDate(a.date)) + '</b><span class="arrow">→</span><b style="color:' + (late ? 'var(--bad)' : 'var(--text)') + '">' + esc(shortDate(b.date)) + '</b>' + (late ? '<span class="status bad">Past target ' + esc(shortDate(rel)) + '</span>' : '<span class="status ok">Still before target</span>') + '</div>'; })() +
+        (r.touches.length ? '<div class="row" style="gap:6px">' + r.touches.map(function (x) { return '<span class="tag">' + esc(x) + '</span>'; }).join('') + '</div>' : '') +
+        (r.reasoning ? '<div>' + esc(r.reasoning) + '</div>' : '') +
+        (r.alternative ? '<div class="rc-block" style="padding:12px 0 0;border-top:1px solid var(--line)"><div class="label">Smaller version</div><div>' + esc(r.alternative) + '</div></div>' : '') +
+        (r.saved ? '<div class="msg">' + esc(r.saved) + '</div>' :
+          '<div class="row"><button class="btn" type="button" data-act="scope-park">Park for post-launch</button><button class="btn" type="button" data-act="scope-add">Add to To do</button><button class="btn ghost" type="button" data-act="scope-drop">Drop the idea</button></div>' +
+          '<div class="note">Each choice is saved to the decision log, so Veta remembers it.</div>') +
+      '</div>';
+  }
+  var hist = p.checks.length ? '<section class="panel" style="margin-top:20px"><div class="panel-head"><span class="label">Earlier checks</span></div><div class="hist">' +
+    p.checks.slice(0, 8).map(function (c) { return '<button type="button" data-check="' + c.id + '"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(c.idea) + '</span><span class="pill ' + c.verdict.split(' ')[0] + '">' + esc(c.verdict) + '</span></button>'; }).join('') + '</div></section>' : '';
+  $('view').innerHTML =
+    '<div class="scope">' +
+      '<div>' +
+        '<form class="panel" id="scope-form" style="padding:16px;display:flex;flex-direction:column;gap:12px" autocomplete="off">' +
+          field('scope-idea', 'Feature idea', '<textarea class="textarea" id="scope-idea" rows="4" maxlength="1000" placeholder="e.g. Add a crafting system so players can build their own weapons">' + esc(ui.scopeIdea) + '</textarea>') +
+          '<div class="row" style="align-items:center;justify-content:space-between">' +
+            (ui.busy.scope ? '<button class="btn" type="button" data-act="stop" data-key="scope">Stop</button>' : '<button class="btn primary" type="submit">' + icon(I.spark, 14) + 'Check scope</button>') +
+          '</div>' + msgLine('scope') +
+        '</form>' + hist +
+      '</div>' +
+      '<section class="panel" aria-label="Scope Guard result">' + result + '</section>' +
+    '</div>';
+}
+function checkScope() {
+  var p = P();
+  var idea = String(ui.scopeIdea || '').trim();
+  if (ui.busy.scope) return;
+  if (!idea) { ui.msg.scope = { err: true, text: 'Describe the feature idea first.' }; return viewScope(); }
+  if (!provider()) { var qr = quickScope(p, idea); ui.scopeResult = qr; ui.msg.scope = null; p.checks.unshift(qr); if (p.checks.length > 30) p.checks.length = 30; save(); return viewScope(); }
+  ui.busy.scope = true; ui.msg.scope = null; ui.scopeResult = null; ui.ctl.scope = new AbortController(); viewScope();
+  var prompt = [
+    'You are Veta\'s Scope Guard. A game developer wants to add a new feature. Judge it against the project below like a strict but fair producer whose job is protecting the release date.',
+    '', projectContext(p), '',
+    'NEW FEATURE IDEA: ' + idea, '',
+    'Reply with only one JSON object: {"verdict": "RISKY", "delayWeeks": 3, "touches": ["..."], "reasoning": "...", "alternative": "..."}',
+    'Rules:',
+    '- verdict: IN SCOPE if it directly supports the core loop and is cheap; RISKY if it helps but costs real time; OUT OF SCOPE if it is outside the core loop or pulls in new systems.',
+    '- delayWeeks: whole number of weeks this would push the release for this team (0 if none).',
+    '- touches: 1-5 existing systems this would affect, 1-3 words each.',
+    '- reasoning: 1-2 sentences, specific to this game.',
+    '- alternative: a smaller version that keeps most of the value, in one sentence.',
+    '- Write text in the same language as the idea.'
+  ].join('\n');
+  aiJson(prompt, ui.ctl.scope.signal).then(function (d) {
+    var v = String(d && d.verdict || '').toUpperCase().replace(/_/g, ' ').trim();
+    if (['IN SCOPE', 'RISKY', 'OUT OF SCOPE'].indexOf(v) < 0) v = 'RISKY';
+    var r = { id: uid(), at: Date.now(), idea: idea, verdict: v, delayWeeks: Math.round(num(d && d.delayWeeks, 0, 52, 0)), touches: strs(d && d.touches, 5), reasoning: String(d && d.reasoning || '').trim(), alternative: String(d && d.alternative || '').trim() };
+    ui.scopeResult = r;
+    p.checks.unshift(r); if (p.checks.length > 30) p.checks.length = 30;
+  }).catch(function (e) { ui.msg.scope = { err: e && e.code !== 'cancelled', text: errText(e) }; })
+    .then(function () { ui.busy.scope = false; save(); if (store.view === 'scope' && P() === p) viewScope(); });
+}
+function scopeDecide(kind) {
+  var p = P(), r = ui.scopeResult;
+  if (!r || r.saved) return;
+  var days = Math.max(1, (r.delayWeeks || 1) * 5);
+  var why = r.verdict + (r.delayWeeks ? ', about +' + r.delayWeeks + ' weeks' : '') + '. ' + (r.reasoning || '');
+  if (kind === 'park') { p.tasks.push({ id: uid(), title: r.idea.slice(0, 140), days: days, system: 'Idea', col: 'backlog' }); p.decisions.unshift({ id: uid(), at: Date.now(), source: 'Scope Guard', text: 'Park until after launch: ' + r.idea, why: why }); r.saved = 'Parked in Post-launch on the task board and saved to the decision log.'; }
+  if (kind === 'add') { p.tasks.push({ id: uid(), title: r.idea.slice(0, 140), days: days, system: 'New', col: 'todo' }); p.decisions.unshift({ id: uid(), at: Date.now(), source: 'Scope Guard', text: 'Added to scope: ' + r.idea, why: why }); r.saved = 'Added to To do and saved to the decision log.'; }
+  if (kind === 'drop') { p.decisions.unshift({ id: uid(), at: Date.now(), source: 'Scope Guard', text: 'Dropped: ' + r.idea, why: why }); r.saved = 'Dropped and saved to the decision log.'; }
+  save(); renderNav(); viewScope(); toast(r.saved);
+}
+
+/* ---------- decisions ---------- */
+function viewDecisions() {
+  var p = P();
+  topbar('Decision log', 'Veta includes these in every answer for this project', '');
+  $('view').innerHTML =
+    '<div class="dec">' +
+      '<form class="panel" id="dec-form" style="padding:16px;display:grid;gap:12px;margin-bottom:20px" autocomplete="off">' +
+        field('d-text', 'Decision', '<input class="input" id="d-text" maxlength="200" placeholder="e.g. Ship with 2 biomes instead of 3">') +
+        field('d-why', 'Why (optional)', '<input class="input" id="d-why" maxlength="300" placeholder="e.g. The artist cannot finish 3 biomes in time">') +
+        '<div><button class="btn" type="submit">' + icon(I.plus, 14) + 'Log decision</button></div>' +
+      '</form>' +
+      '<section class="panel" aria-label="Decisions">' +
+        (p.decisions.length ? p.decisions.map(function (d) {
+          return '<div class="dec-item"><div class="d-main"><div class="d-text">' + esc(d.text) + '</div>' + (d.why ? '<div class="d-why">' + esc(d.why) + '</div>' : '') + '<div class="d-meta">' + esc(d.source || 'Manual') + ' · ' + esc(fmtDate(d.at)) + '</div></div>' +
+            '<button class="mini" type="button" data-del-dec="' + d.id + '" aria-label="Delete decision">' + icon(I.x, 14) + '</button></div>';
+        }).join('') : '<div class="empty">No decisions yet. Log them here, or let Scope Guard log them for you.</div>') +
+      '</section>' +
+    '</div>';
+}
+
+/* ---------- settings ---------- */
+function openSettings() { renderSettings(); $('settings').hidden = false; var f = $('k-input') || $('settings-close'); if (f) f.focus(); }
+function closeSettings() { $('settings').hidden = true; renderStatus(); renderView(); }
+function renderSettings(status) {
+  var key = groqKey();
+  var pv = store.provider || 'auto';
+  $('settings-body').innerHTML =
+    (serverAI ? '<div class="banner" style="padding:12px 14px"><div class="bt"><b>Veta\'s free demo AI is on.</b><span>No key needed. It has an hourly limit per visitor. Add your own free Groq key below if you want more.</span></div></div>' : '') +
+    '<p class="note" style="margin:0">' + (serverAI ? 'Optional: use' : 'Veta uses') + ' Groq\'s free API with your own key. The key stays in this browser and is sent only to Groq.</p>' +
+    '<div class="field"><label for="k-input">Groq API key</label><input class="input" id="k-input" type="password" autocomplete="off" spellcheck="false" placeholder="' + (key ? 'Saved. Paste a new key to replace it.' : 'gsk_...') + '"></div>' +
+    '<div class="note">No key yet? Create one for free at <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a>, then paste it here.</div>' +
+    field('k-model', 'Model', '<select class="select" id="k-model">' + MODELS.map(function (m) { return '<option value="' + m.id + '"' + (m.id === store.model ? ' selected' : '') + '>' + m.label + '</option>'; }).join('') + '</select>') +
+    (claudeSample ? '<fieldset style="border:0;padding:0;margin:0;display:grid;gap:8px"><legend class="label" style="margin-bottom:8px">Which AI answers</legend>' +
+      choice('auto', 'Automatic', 'Groq when a key is saved, otherwise Claude.', pv) +
+      choice('groq', 'Groq', 'Always use your Groq key.', pv) +
+      choice('claude', 'Claude', 'Runs on your own Claude account inside claude.ai.', pv) +
+    '</fieldset>' : '') +
+    '<div class="row"><button class="btn primary" type="button" data-act="k-save">Save</button><button class="btn" type="button" data-act="k-test"' + (key ? '' : ' disabled') + '>Test connection</button>' +
+      (key ? '<button class="btn danger" type="button" data-act="k-remove">Remove key</button>' : '') + '</div>' +
+    (status ? '<div class="msg' + (status.err ? ' err' : '') + '" role="status">' + esc(status.text) + '</div>' : '') +
+    '<div style="border-top:1px solid var(--line);padding-top:16px;display:flex;flex-direction:column;gap:8px"><div class="label">Demo data</div>' +
+    (ui.confirm === 'reset' ? '<div class="confirm"><span>Delete all projects in this browser and restore the example?</span><button class="btn danger sm" type="button" data-act="reset-yes">Reset</button><button class="btn ghost sm" type="button" data-act="reset-no">Cancel</button></div>' :
+      '<div><button class="btn ghost sm" type="button" data-act="reset">Reset demo data</button></div>') +
+    '<div class="note">Projects are saved in this browser only.</div></div>';
+}
+function choice(v, title, note, cur) { return '<label class="choice"><input type="radio" name="k-prov" value="' + v + '"' + (cur === v ? ' checked' : '') + '><span><b>' + title + '</b><span class="note">' + note + '</span></span></label>'; }
+function saveSettings() {
+  var k = ($('k-input').value || '').trim();
+  if (k) lsSet(KEY_KEY, k);
+  store.model = $('k-model').value;
+  var r = document.querySelector('input[name="k-prov"]:checked'); if (r) store.provider = r.value;
+  save(); renderStatus();
+  var pvn = provider();
+  renderSettings({ text: pvn ? 'Saved. ' + (pvn === 'groq' ? 'Your Groq key' : pvn === 'veta' ? 'Veta\'s demo AI' : 'Claude') + ' will answer.' : 'Saved, but no AI is connected yet. Paste a Groq key.' , err: !pvn });
+}
+function testKey() {
+  renderSettings({ text: 'Testing…' });
+  groqFetch({ model: store.model, messages: [{ role: 'user', content: 'Reply with the word OK.' }], max_tokens: 200, temperature: 0 })
+    .then(function () { renderSettings({ text: 'Connected. Groq answered with ' + modelLabel() + '.' }); })
+    .catch(function (e) { renderSettings({ text: errText(e), err: true }); });
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', function (e) {
+  var b = e.target.closest('button, a');
+  if (!b) { if (e.target === $('settings')) closeSettings(); if (e.target === $('wizard')) closeWizard(); return; }
+  var p = P();
+  if (b.id === 'ai-status') return openSettings();
+  if (b.id === 'settings-close') return closeSettings();
+  if (b.id === 'new-proj') return openWizard();
+  if (b.id === 'wiz-close' || b.id === 'wiz-cancel') return closeWizard();
+  if (b.dataset.tpl) { var tp = tplById(b.dataset.tpl); p.gdd = buildGdd(tp, { team: p.team, release: releaseOf(p) }); if (!p.genre && tp.id !== 'other') p.genre = tp.name; p.template = tp.id; save(); viewGdd(); toast('Template added. Replace the parts in brackets.'); return; }
+  if (b.dataset.view) { store.view = b.dataset.view; ui.confirm = null; save(); renderNav(); renderView(); return; }
+  if (b.dataset.agent) { store.agent = b.dataset.agent; save(); viewChat(); return; }
+  if (b.dataset.starter) { sendChat(b.dataset.starter); return; }
+  if (b.dataset.move) { var t = p.tasks.find(function (x) { return x.id === b.dataset.move; }); if (t) { var ci = COLS.findIndex(function (c) { return c.id === t.col; }); t.col = COLS[clamp(ci + Number(b.dataset.dir), 0, COLS.length - 1)].id; save(); renderNav(); viewTasks(); } return; }
+  if (b.dataset.delTask) { p.tasks = p.tasks.filter(function (x) { return x.id !== b.dataset.delTask; }); save(); renderNav(); viewTasks(); return; }
+  if (b.dataset.delDec) { p.decisions = p.decisions.filter(function (x) { return x.id !== b.dataset.delDec; }); save(); renderNav(); viewDecisions(); return; }
+  if (b.dataset.check) { var c = p.checks.find(function (x) { return x.id === b.dataset.check; }); if (c) { ui.scopeResult = c; ui.scopeIdea = c.idea; viewScope(); } return; }
+  var a = b.dataset.act;
+  if (!a) return;
+  if (a === 'send') { var inp = $('chat-input'); var v = inp ? inp.value : ''; sendChat(v); return; }
+  if (a === 'stop') { var k = b.dataset.key; if (ui.ctl[k]) ui.ctl[k].abort(); return; }
+  if (a === 'clear-chat') { p.chat = []; ui.msg.chat = null; save(); viewChat(); return; }
+  if (a === 'analyze') return analyzeGdd();
+  if (a === 'open-settings') return openSettings();
+  if (a === 'wizard') return openWizard();
+  if (a === 'export') return exportMd();
+  if (a === 'gen-tasks') return genTasks();
+  if (a === 'gen-add') return genTasks('add');
+  if (a === 'gen-replace') return genTasks('replace');
+  if (a === 'confirm-cancel') { ui.confirm = null; renderView(); return; }
+  if (a === 'delete-project') { ui.confirm = 'delete-project'; viewGdd(); return; }
+  if (a === 'delete-project-yes') {
+    store.projects = store.projects.filter(function (x) { return x.id !== p.id; });
+    if (!store.projects.length) store.projects.push(exampleProject());
+    store.current = store.projects[0].id; ui.confirm = null; ui.scopeResult = null; save(); renderAll(); return;
+  }
+  if (a === 'scope-park') return scopeDecide('park');
+  if (a === 'scope-add') return scopeDecide('add');
+  if (a === 'scope-drop') return scopeDecide('drop');
+  if (a === 'k-save') return saveSettings();
+  if (a === 'k-test') return testKey();
+  if (a === 'k-remove') { lsDel(KEY_KEY); renderStatus(); renderSettings({ text: 'Key removed from this browser.' }); return; }
+  if (a === 'reset') { ui.confirm = 'reset'; renderSettings(); return; }
+  if (a === 'reset-no') { ui.confirm = null; renderSettings(); return; }
+  if (a === 'reset-yes') { var ex = exampleProject(); store.projects = [ex]; store.current = ex.id; store.view = 'chat'; ui.confirm = null; ui.scopeResult = null; ui.scopeIdea = ''; save(); renderAll(); renderSettings({ text: 'Demo data reset.' }); return; }
+});
+
+document.addEventListener('input', function (e) {
+  var t = e.target, p = P();
+  if (t.id === 'p-name') { p.name = t.value; p.example = false; saveSoon(); renderProjects(); return; }
+  if (t.id === 'p-genre') { p.genre = t.value; saveSoon(); return; }
+  if (t.id === 'p-team') { p.team = Math.round(num(t.value, 1, 200, 1)); saveSoon(); return; }
+  if (t.id === 'p-release') { var rd = parseIso(t.value); if (rd) { p.release = t.value; p.months = monthsUntil(rd); saveSoon(); } return; }
+  if (t.id === 'p-gdd') { p.gdd = t.value; saveSoon(); return; }
+  if (t.id === 'scope-idea') { ui.scopeIdea = t.value; return; }
+});
+
+document.addEventListener('change', function (e) {
+  if (e.target.name === 'w-tpl') {
+    wiz.tpl = e.target.value; var tt = tplById(wiz.tpl);
+    $('w-pitch').placeholder = tt.pitch; $('w-loop').placeholder = tt.loop; $('w-feats').placeholder = tt.feats.join('\n');
+    var wt = $('w-tasks'); if (wt) wt.parentNode.querySelector('span').textContent = tt.tasks.length ? 'Add the typical first-playable tasks for a ' + tt.name.toLowerCase() + ' game (' + tt.tasks.length + ' tasks)' : 'No starter tasks for this template';
+    if (wt) wt.disabled = !tt.tasks.length; if (wt && !tt.tasks.length) wt.checked = false;
+    return;
+  }
+  if (e.target.id === 'proj-select') { store.current = e.target.value; ui.confirm = null; ui.scopeResult = null; ui.scopeIdea = ''; save(); renderAll(); }
+});
+
+document.addEventListener('keydown', function (e) {
+  if (e.target.id === 'chat-input' && e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); sendChat(e.target.value); }
+  if (e.key === 'Escape' && !$('settings').hidden) closeSettings();
+  if (e.key === 'Escape' && !$('wizard').hidden) closeWizard();
+});
+
+document.addEventListener('submit', function (e) {
+  e.preventDefault();
+  var p = P(), f = e.target;
+  if (f.id === 'add-task') {
+    var title = ($('t-title').value || '').trim(); if (!title) { $('t-title').focus(); return; }
+    p.tasks.push({ id: uid(), title: title.slice(0, 140), days: Math.round(num($('t-days').value, 1, 60, 2)), system: '', col: 'todo' });
+    save(); renderNav(); viewTasks(); var ti = $('t-title'); if (ti) ti.focus(); return;
+  }
+  if (f.id === 'dec-form') {
+    var text = ($('d-text').value || '').trim(); if (!text) { $('d-text').focus(); return; }
+    p.decisions.unshift({ id: uid(), at: Date.now(), source: 'Manual', text: text, why: ($('d-why').value || '').trim() });
+    save(); renderNav(); viewDecisions(); return;
+  }
+  if (f.id === 'scope-form') { checkScope(); return; }
+  if (f.id === 'wiz-form') { wizardCreate(); return; }
+});
+
+/* ---------- boot ---------- */
+if (SITE) { var bl = $('back-link'); bl.href = SITE; bl.hidden = false; if (/^https?:/.test(SITE)) { bl.target = '_blank'; bl.rel = 'noopener'; } }
+renderAll();
+checkServerAI();
+if (!lsGet(STORE_KEY + '-home')) { lsSet(STORE_KEY + '-home', '1'); store.view = 'home'; renderNav(); renderView(); }
+save();
+
+/* exposed for tests */
+window.__veta = { forecast: forecast, buildGdd: buildGdd, TEMPLATES: TEMPLATES, md: md, parseJson: parseJson, sseDelta: sseDelta, projectContext: projectContext, quickReport: quickReport, quickScope: quickScope, quickTasks: quickTasks };
+})();
+</script>
+
+</body>
+</html>
