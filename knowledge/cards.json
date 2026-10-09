@@ -1,0 +1,218 @@
+{
+  "version": 1,
+  "note": "Veta knowledge cards. Each card is short, general guidance the AI may use. 'source: heuristic' means common indie practice, not a measured statistic. Never put made-up numbers in a card.",
+  "cards": [
+    {
+      "id": "online-multiplayer-cost",
+      "title": "Online multiplayer multiplies work for small teams",
+      "type": "pattern",
+      "tags": ["multiplayer", "online", "co-op", "coop", "pvp", "netcode", "lobby", "matchmaking", "çok oyunculu", "eşli"],
+      "summary": "Online play touches almost every system: movement sync, enemy state, saves, UI, testing with several machines, and support after launch.",
+      "guidance": [
+        "Ask whether the core loop is fun in single-player or local co-op first.",
+        "If online is essential, build the networking layer before content, not after.",
+        "Budget extra time for testing with real players on different connections.",
+        "A common cut: launch single-player or local co-op, add online in an update."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "open-world-content-trap",
+      "title": "Open worlds are a content problem, not a map problem",
+      "type": "pattern",
+      "tags": ["open world", "open-world", "sandbox", "huge map", "exploration", "açık dünya", "keşif"],
+      "summary": "A big map is cheap to make empty and expensive to make interesting. Every area needs things to do, art to fill it and testing.",
+      "guidance": [
+        "Prefer a few dense, hand-made zones over one large sparse map.",
+        "Count content per area (encounters, secrets, quests) before committing to size.",
+        "Streaming, saves and performance get harder as the world grows."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "procedural-templates-first",
+      "title": "Procedural levels: start from hand-made templates",
+      "type": "pattern",
+      "tags": ["procedural", "roguelike", "roguelite", "random", "generation", "rooms", "prosedürel", "rastgele"],
+      "summary": "Fully generated levels are hard to make fun and hard to debug. Shuffling hand-made rooms or chunks gives variety with control.",
+      "guidance": [
+        "Build 10-20 hand-made rooms and randomize their order and contents first.",
+        "Add generation rules only where players notice repetition.",
+        "Keep a seed system so bugs can be reproduced."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "content-multiplies-art",
+      "title": "Content counts multiply the art workload",
+      "type": "pattern",
+      "tags": ["characters", "playable", "biomes", "bosses", "animation", "art", "artist", "assets", "karakter", "biyom", "animasyon", "sanatçı"],
+      "summary": "Each extra character, biome or boss is not one task: it brings models or sprites, animations, effects, sounds and balancing.",
+      "guidance": [
+        "Multiply content counts by the assets each one needs before estimating.",
+        "When one artist supports the whole game, art is usually the real bottleneck, not code.",
+        "Cut a full content type (one biome, one character) rather than shrinking everything a little."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "first-playable",
+      "title": "Define the first playable before anything else",
+      "type": "checklist",
+      "tags": ["first playable", "prototype", "vertical slice", "milestone", "demo", "prototip", "ilk oynanabilir", "dikey dilim"],
+      "summary": "The first playable is the smallest build where a stranger can play the core loop start to finish once.",
+      "guidance": [
+        "List only what the core loop needs: control, one goal, one obstacle, a win and a fail state.",
+        "Use placeholder art. Test whether it is fun before producing content.",
+        "Give it a date. If it slips, cut scope, not testing."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "estimate-buffer",
+      "title": "First estimates are optimistic",
+      "type": "estimate",
+      "tags": ["estimate", "deadline", "timeline", "schedule", "release date", "tahmin", "takvim", "çıkış tarihi", "süre"],
+      "summary": "Task estimates usually leave out integration, bugs, polish and the time between tasks. First projects tend to underestimate the most.",
+      "guidance": [
+        "Keep a visible buffer instead of padding every task silently.",
+        "Compare estimated vs actual days after each milestone and adjust the rest of the plan.",
+        "If the plan only works with zero surprises, the scope is too big."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "polish-tail",
+      "title": "Reserve the end of the schedule for fixing, not adding",
+      "type": "checklist",
+      "tags": ["polish", "bug", "bugs", "qa", "testing", "launch", "release", "content freeze", "cila", "hata", "test", "içerik dondurma"],
+      "summary": "The last stretch before launch fills up with bugs, platform requirements, store assets and feedback fixes.",
+      "guidance": [
+        "Set a content freeze date well before launch; after it, only fixes and polish.",
+        "Plan time for store page, trailer, builds and platform review.",
+        "Keep a 'post-launch' list so good ideas have a home that is not this release."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "playtest-feature-creep",
+      "title": "Playtest feedback is a common source of scope creep",
+      "type": "pattern",
+      "tags": ["playtest", "feedback", "testers", "feature request", "players want", "geri bildirim", "oyun testi", "istek"],
+      "summary": "Testers suggest features; the underlying problem is often smaller than the suggestion.",
+      "guidance": [
+        "Ask what problem the suggestion solves, then look for the cheapest fix.",
+        "Act on patterns across several testers, not one loud request.",
+        "Run every new idea through Scope Guard and log the decision."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "solo-dev-scope",
+      "title": "Solo developers: one core mechanic, done well",
+      "type": "pattern",
+      "tags": ["solo", "alone", "one developer", "by myself", "tek kişi", "yalnız", "solo dev"],
+      "summary": "A solo developer is also the artist, tester, marketer and support team, so production time is a fraction of total time.",
+      "guidance": [
+        "Pick one mechanic the game is about and cut systems that do not feed it.",
+        "Use existing assets or a simple art style that you can produce consistently.",
+        "Start marketing (store page, devlog) while building, not after."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "rage-platformer-fairness",
+      "title": "Rage and precision platformers must feel fair",
+      "type": "genre",
+      "tags": ["rage", "precision", "platformer", "fall", "falling", "difficult", "hard", "climb", "öfke", "düşme", "zor", "platform"],
+      "summary": "Players accept punishment when they understand why they failed. Unclear hitboxes, camera problems or random effects make frustration feel unfair.",
+      "guidance": [
+        "Make the cause of every fall readable on screen.",
+        "Introduce twists (control changes, fake checkpoints) one at a time and telegraph them.",
+        "Design a few clip-worthy moments; this genre spreads through streams and short videos.",
+        "Test with people who did not build the game and watch where they quit."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "narrative-branching",
+      "title": "Branching stories grow faster than you expect",
+      "type": "genre",
+      "tags": ["narrative", "story", "dialogue", "choices", "branching", "endings", "visual novel", "hikaye", "diyalog", "seçim", "son"],
+      "summary": "Every choice that changes the story multiplies writing, testing and art. Most narrative games branch and then bring paths back together.",
+      "guidance": [
+        "Use branch-and-bottleneck: let choices diverge, then reconverge at key scenes.",
+        "Track consequences with a few flags rather than separate storylines.",
+        "Write a word budget per chapter and check it against the schedule."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "cozy-sim-depth",
+      "title": "Cozy sims: depth of a few systems beats many shallow ones",
+      "type": "genre",
+      "tags": ["cozy", "farming", "life sim", "villagers", "seasons", "crafting", "decoration", "çiftlik", "köylü", "mevsim", "dekorasyon"],
+      "summary": "Cozy games live on routine and attachment. Many half-built systems feel empty; a few rich ones feel alive.",
+      "guidance": [
+        "Pick the 2-3 daily activities the game is about and make them satisfying.",
+        "Fewer villagers with real personality beat many with one line each.",
+        "Plan content for the first in-game week in detail before planning a full year."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "store-page-early",
+      "title": "Put the store page up long before launch",
+      "type": "checklist",
+      "tags": ["steam", "store page", "wishlist", "wishlists", "marketing", "trailer", "launch", "mağaza", "pazarlama", "fragman"],
+      "summary": "Store pages collect interest over time; a page that goes live just before launch has little to show on day one.",
+      "guidance": [
+        "Prepare capsule art, screenshots, a short trailer and a clear one-line pitch.",
+        "Check the platform's current rules and review times before picking a launch date.",
+        "Share progress regularly and point every post to the store page."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "localization-ready",
+      "title": "Make text ready for translation early",
+      "type": "checklist",
+      "tags": ["localization", "translation", "languages", "turkish", "english", "strings", "çeviri", "dil", "yerelleştirme"],
+      "summary": "Retrofitting translation is painful when text is hard-coded or baked into images.",
+      "guidance": [
+        "Keep all player-facing text in string tables from the start.",
+        "Leave room in UI for longer languages.",
+        "Avoid text inside textures."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    },
+    {
+      "id": "cut-whole-features",
+      "title": "When cutting, remove whole features, not quality",
+      "type": "pattern",
+      "tags": ["cut", "cuts", "scope", "too much", "behind schedule", "late", "kes", "kesinti", "gecikme", "yetişmiyor"],
+      "summary": "Trimming every feature a little leaves a game where nothing feels finished. Removing a whole feature keeps the rest polished.",
+      "guidance": [
+        "Rank features by how much they serve the core loop; cut from the bottom.",
+        "Move cut features to a post-launch list and log why in the decision log.",
+        "Re-check the release forecast after each cut."
+      ],
+      "source": "heuristic",
+      "updated": "2026-10-09"
+    }
+  ]
+}

@@ -513,6 +513,30 @@ try {
 
 function groqKey() { return lsGet(KEY_KEY) || ''; }
 var serverAI = false; // true when this site's /api/ai proxy has a key configured
+/* ---------- knowledge cards (RAG phase 1: keyword match) ---------- */
+var CARDS = [];
+function loadCards() {
+  if (!/^https?:$/.test(location.protocol)) return;
+  fetch('knowledge/cards.json', { headers: { 'Accept': 'application/json' } })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (j) { if (j && Array.isArray(j.cards)) CARDS = j.cards; })
+    .catch(function () {});
+}
+function pickCards(query, extra, n) {
+  var q = lowerTr(query), x = lowerTr(extra || '');
+  return CARDS.map(function (c) {
+    var qs = 0, xs = 0;
+    (c.tags || []).forEach(function (t) { t = lowerTr(t); if (q.indexOf(t) >= 0) qs++; if (x.indexOf(t) >= 0) xs++; });
+    return { c: c, score: qs * 3 + Math.min(xs, 3) };
+  }).filter(function (o) { return o.score >= 3; })
+    .sort(function (a, b) { return b.score - a.score; }).slice(0, n || 3).map(function (o) { return o.c; });
+}
+function cardsBlock(cards) {
+  if (!cards.length) return '';
+  return '\n\nVETA KNOWLEDGE CARDS (general production guidance from Veta. Use them only if they fit this project. They are heuristics, not statistics; never turn them into numbers. When you rely on one, you may say "Veta guidance"):\n' +
+    cards.map(function (c) { return '- ' + c.title + ': ' + c.summary + ' Advice: ' + (c.guidance || []).join(' '); }).join('\n');
+}
+
 function checkServerAI() {
   if (!/^https?:$/.test(location.protocol)) return;
   fetch('/api/ai', { method: 'GET', headers: { 'Accept': 'application/json' } })
@@ -1003,7 +1027,8 @@ function msgHtml(m, i) {
   var a = AGENTS.find(function (x) { return x.id === m.agent; });
   var who = m.role === 'user' ? 'You' : (a ? a.name : 'Veta');
   var body = m.role === 'user' ? '<p>' + esc(m.content).replace(/\n/g, '<br>') + '</p>' : (m.content ? md(m.content) : '<span class="thinking">Thinking…</span>');
-  return '<div class="m ' + m.role + '"><div class="who" aria-hidden="true">' + (m.role === 'user' ? 'YOU' : 'V') + '</div><div class="body"><div class="meta">' + esc(who) + '</div><div id="mb-' + i + '">' + body + '</div></div></div>';
+  var cardsLine = m.role !== 'user' && m.cards && m.cards.length && m.content ? '<div class="note" style="margin-top:8px;font-size:12px">Veta guidance used: ' + m.cards.map(esc).join(' · ') + '</div>' : '';
+  return '<div class="m ' + m.role + '"><div class="who" aria-hidden="true">' + (m.role === 'user' ? 'YOU' : 'V') + '</div><div class="body"><div class="meta">' + esc(who) + '</div><div id="mb-' + i + '">' + body + '</div>' + cardsLine + '</div></div>';
 }
 function sendChat(text) {
   var p = P();
@@ -1031,6 +1056,9 @@ function sendChat(text) {
     '- If the developer is about to grow the scope, say so plainly.\n' +
     '- End with exactly one concrete next step for this week.\n' +
     '- Reply in the language the developer writes in. Format: short paragraphs, "-" bullets, **bold** for key terms. No tables, no headings longer than 4 words.\n\n' + projectContext(p);
+  var used = pickCards(text, p.gdd, 3);
+  reply.cards = used.map(function (c) { return c.title; });
+  system += cardsBlock(used);
   var msgs = [{ role: 'system', content: system }].concat(history).concat([{ role: 'user', content: text }]);
   aiChat(msgs, function (t) {
     reply.content = t;
@@ -1111,7 +1139,7 @@ function analyzeGdd() {
   ui.busy.gdd = true; ui.msg.gdd = null; ui.ctl.gdd = new AbortController(); viewGdd();
   var prompt = [
     'You are Veta, a game production planner. Review this game design document like an experienced, honest producer. Be specific to THIS game. Use only what the GDD says; do not invent names, engines or features. Weigh art and content workload as well as code.',
-    '', projectContext(p, { noTasks: true }), '',
+    '', projectContext(p, { noTasks: true }), cardsBlock(pickCards(p.gdd, '', 3)), '',
     'Reply with only one JSON object in exactly this shape:',
     '{"quality": 7.5, "readiness": 5, "coreLoop": "...", "strengths": ["..."], "risks": ["..."], "missing": ["..."], "riskLevel": "HIGH"}',
     'Rules:',
@@ -1254,7 +1282,7 @@ function checkScope() {
   var prompt = [
     'You are Veta\'s Scope Guard. A game developer wants to add a new feature. Judge it against the project below like a strict but fair producer whose job is protecting the release date. Count art, animation and content work, not only code. Do not invent facts that are not in the project.',
     '', projectContext(p), '',
-    'NEW FEATURE IDEA: ' + idea, '',
+    'NEW FEATURE IDEA: ' + idea, cardsBlock(pickCards(idea, p.gdd, 2)), '',
     'Reply with only one JSON object: {"verdict": "RISKY", "delayWeeks": 3, "touches": ["..."], "reasoning": "...", "alternative": "..."}',
     'Rules:',
     '- verdict: IN SCOPE if it directly supports the core loop and is cheap; RISKY if it helps but costs real time; OUT OF SCOPE if it is outside the core loop or pulls in new systems.',
@@ -1441,11 +1469,12 @@ document.addEventListener('submit', function (e) {
 if (SITE) { var bl = $('back-link'); bl.href = SITE; bl.hidden = false; if (/^https?:/.test(SITE)) { bl.target = '_blank'; bl.rel = 'noopener'; } }
 renderAll();
 checkServerAI();
+loadCards();
 if (!lsGet(STORE_KEY + '-home')) { lsSet(STORE_KEY + '-home', '1'); store.view = 'home'; renderNav(); renderView(); }
 save();
 
 /* exposed for tests */
-window.__veta = { forecast: forecast, buildGdd: buildGdd, TEMPLATES: TEMPLATES, md: md, parseJson: parseJson, sseDelta: sseDelta, projectContext: projectContext, quickReport: quickReport, quickScope: quickScope, quickTasks: quickTasks };
+window.__veta = { pickCards: pickCards, cards: function () { return CARDS; }, forecast: forecast, buildGdd: buildGdd, TEMPLATES: TEMPLATES, md: md, parseJson: parseJson, sseDelta: sseDelta, projectContext: projectContext, quickReport: quickReport, quickScope: quickScope, quickTasks: quickTasks };
 })();
 </script>
 
