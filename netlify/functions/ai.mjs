@@ -14,15 +14,6 @@ function getKey() {
   if (!k) k = process.env.GROQ_API_KEY || '';
   return String(k).trim();
 }
-// Safe diagnostics for the GET check: whether the variable is visible, never its value.
-function keyDiag() {
-  let viaNetlify = false;
-  try { viaNetlify = !!(globalThis.Netlify && Netlify.env && Netlify.env.has && Netlify.env.has('GROQ_API_KEY')); } catch (e) {}
-  const similar = Object.keys(process.env).filter((n) => /groq/i.test(n));
-  let netlifyLen = -1; try { const v = globalThis.Netlify && Netlify.env ? Netlify.env.get('GROQ_API_KEY') : undefined; netlifyLen = v == null ? -1 : String(v).length; } catch (e) {}
-  const raw = process.env.GROQ_API_KEY;
-  return { viaNetlify, viaProcess: !!raw, processLen: raw == null ? -1 : String(raw).length, netlifyLen, startsWithGsk: /^\s*gsk_/.test(String(raw || '')), similarNames: similar, context: process.env.CONTEXT || null, site: process.env.SITE_NAME || process.env.URL || null };
-}
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } });
 }
@@ -30,7 +21,7 @@ function err(message, status) { return json({ error: { message } }, status); }
 
 export default async (req, context) => {
   const key = getKey();
-  if (req.method === 'GET') return json({ ok: !!key, provider: 'groq', limitPerHour: LIMIT_PER_HOUR, env: keyDiag(), version: 3 });
+  if (req.method === 'GET') return json({ ok: !!key, provider: 'groq', limitPerHour: LIMIT_PER_HOUR });
   if (req.method !== 'POST') return err('Method not allowed', 405);
   if (!key) return err('The demo AI is not configured yet.', 503);
 
