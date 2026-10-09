@@ -105,6 +105,10 @@ a{color:var(--accent-soft)}
 .msg.err{color:var(--bad)}
 .empty{padding:28px;text-align:center;color:var(--muted);font-size:14px}
 .row{display:flex;gap:12px;flex-wrap:wrap}
+.due-sel{font-family:var(--font-mono);font-size:11px;background:var(--raised);color:var(--soft);border:1px solid var(--line-strong);border-radius:6px;padding:2px 4px;max-width:130px}
+.gate{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--line)}
+.gate:first-child{border-top:0}
+.gate .g-main{flex:1;min-width:0}
 .tag{font-family:var(--font-mono);font-size:11px;color:var(--soft);background:var(--raised);border:1px solid var(--line-strong);border-radius:6px;padding:2px 7px;white-space:nowrap}
 .pill{font-family:var(--font-mono);font-size:12px;letter-spacing:.06em;border-radius:6px;padding:4px 9px;border:1px solid var(--line-strong);white-space:nowrap}
 .pill.LOW,.pill.IN{color:var(--ok);background:var(--ok-wash);border-color:var(--ok-line)}
@@ -395,7 +399,7 @@ var MEM_KINDS = [
   { id: 'playtest', name: 'Playtest' },
   { id: 'rule', name: 'Rule' }
 ];
-var MEM_BUDGET = 2600;
+var MEM_BUDGET = 4000;
 
 /* ---------- utils ---------- */
 function $(id) { return document.getElementById(id); }
@@ -514,7 +518,7 @@ var saveTimer = null;
 function save() { lsSet(STORE_KEY, JSON.stringify(store)); }
 function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
 function P() { return store.projects.find(function (p) { return p.id === store.current; }) || store.projects[0]; }
-store.projects.forEach(function (p) { if (!parseIso(p.release)) p.release = plusMonths(p.months || 12); if (!Array.isArray(p.memory)) p.memory = []; });
+store.projects.forEach(function (p) { if (!parseIso(p.release)) p.release = plusMonths(p.months || 12); if (!Array.isArray(p.memory)) p.memory = []; if (!Array.isArray(p.milestones)) p.milestones = []; });
 
 var ui = { busy: {}, ctl: {}, msg: {}, confirm: null, scopeResult: null, scopeIdea: '' };
 
@@ -662,12 +666,49 @@ function projectContext(p, opts) {
     'GDD:\n' + (p.gdd.trim() ? p.gdd.slice(0, opts.gddMax || 6000) : '(empty, the developer has not written one yet)')
   ];
   if (!opts.noTasks) {
-    parts.push('TASK BOARD: ' + p.tasks.length + ' tasks. Open: ' + (open.length ? open.slice(0, 15).map(function (t) { return t.title + ' (' + t.days + 'd, ' + t.col + ')'; }).join('; ') : 'none') + '. Parked for post-launch: ' + (p.tasks.filter(function (t) { return t.col === 'backlog'; }).map(function (t) { return t.title; }).join('; ') || 'none') + '.');
+    parts.push('TASK BOARD: ' + p.tasks.length + ' tasks. Open: ' + (open.length ? open.slice(0, 15).map(function (t) { var g = gateOf(p, t); return t.title + ' (' + t.days + 'd, ' + t.col + (g ? ', due ' + g.name + ' ' + g.date : '') + ')'; }).join('; ') : 'none') + '. Parked for post-launch: ' + (p.tasks.filter(function (t) { return t.col === 'backlog'; }).map(function (t) { return t.title; }).join('; ') || 'none') + '.');
   }
   parts.push('DECISIONS ALREADY MADE:\n' + (p.decisions.length ? p.decisions.slice(0, 20).map(function (d) { return '- ' + d.text + (d.why ? ' (why: ' + d.why + ')' : ''); }).join('\n') : '(none yet)'));
+  var dl = deadlineBlock(p);
+  if (dl) parts.push(dl);
   var mem = memoryBlock(p, opts.q || '');
   if (mem) parts.push(mem);
   return parts.join('\n\n');
+}
+
+/* ---------- milestones and deadline check (computed in code, not by the AI) ---------- */
+function workDaysUntil(d) {
+  var t = today0(), n = 0, c = new Date(t.getTime());
+  while (true) { c.setDate(c.getDate() + 1); if (c > d) break; var w = c.getDay(); if (w !== 0 && w !== 6) n++; if (n > 2000) break; }
+  return n;
+}
+function gateOf(p, t) { return t.due ? (p.milestones || []).find(function (m) { return m.id === t.due; }) || null : null; }
+function gateChecks(p) {
+  var ms = (p.milestones || []).filter(function (m) { return parseIso(m.date); }).slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  var open = p.tasks.filter(function (t) { return t.col === 'todo' || t.col === 'doing'; });
+  var eff = teamEff(Math.max(1, Number(p.team) || 1));
+  return ms.map(function (m) {
+    var d = parseIso(m.date);
+    var due = open.filter(function (t) { var g = gateOf(p, t); return g && g.date <= m.date; });
+    var need = due.reduce(function (s, t) { return s + (Number(t.days) || 0); }, 0);
+    var cal = Math.round((d - today0()) / DAY), wd = workDaysUntil(d), max = Math.floor(wd * eff), focus = Math.floor(wd * 0.8 * eff);
+    var status = cal < 0 ? 'past' : need <= focus ? 'fits' : need <= max ? 'tight' : 'over';
+    return { m: m, tasks: due, need: need, cal: cal, wd: wd, max: max, focus: focus, spare: focus - need, status: status };
+  });
+}
+function deadlineBlock(p) {
+  if (!STUDIO) return '';
+  var g = gateChecks(p).filter(function (x) { return x.status !== 'past'; });
+  if (!g.length) return '';
+  var open = p.tasks.filter(function (t) { return t.col === 'todo' || t.col === 'doing'; });
+  var free = open.filter(function (t) { return !gateOf(p, t); });
+  return 'DEADLINE CHECK (computed by Veta\'s code from the board. These numbers are exact: use them as they are and never recount days yourself. Work days = Mon-Fri after today. Focused days = developer-days the team can give at the planning pace of 4 focused days a week per person; task days are developer-days):\n' +
+    g.map(function (x) {
+      return '- ' + x.m.name + ' (' + x.m.date + '): ' + x.cal + ' calendar days, ' + x.wd + ' work days, ' + x.focus + ' focused days left. Open tasks due by then: ' +
+        (x.tasks.length ? x.tasks.map(function (t) { return t.title + ' ' + t.days + 'd'; }).join(', ') : 'none') + ' = ' + x.need + 'd. Status: ' + x.status.toUpperCase() +
+        (x.status === 'fits' ? ' (' + x.spare + ' focused days spare)' : x.status === 'tight' ? ' (fits only working every weekday)' : ' (' + (x.need - x.max) + ' days over even working every weekday)') + '.';
+    }).join('\n') +
+    (free.length ? '\n- Open tasks with no gate (not due before any milestone above): ' + free.map(function (t) { return t.title + ' ' + t.days + 'd'; }).join(', ') + '.' : '');
 }
 
 /* ---------- studio memory (private, this browser only) ---------- */
@@ -1129,6 +1170,7 @@ function sendChat(text) {
     '- If the developer is about to grow the scope, say so plainly.\n' +
     '- End with exactly one concrete next step for this week.\n' +
     '- Reply in the language the developer writes in. Format: short paragraphs, "-" bullets, **bold** for key terms. No tables, no headings longer than 4 words.\n' +
+    (STUDIO && (p.milestones || []).length ? '- DEADLINE CHECK below is computed by code. Quote its numbers; never recount days. A task without a gate is not due before that milestone. Plan the friend playtest or any review last before its gate.\n' : '') +
     (STUDIO && (p.memory || []).length ? '- STUDIO MEMORY below holds the developer\'s confirmed facts, numbers and playtest notes. Prefer them over the GDD, quote their numbers exactly, and follow its "rule" notes.\n' : '') +
     '\n' + projectContext(p, { q: text, gddMax: STUDIO ? 5000 : 6000 });
   var used = pickCards(text, p.gdd, 3);
@@ -1263,7 +1305,8 @@ function viewTasks() {
       var items = p.tasks.filter(function (t) { return t.col === c.id; });
       return '<section class="col" aria-label="' + c.name + '"><div class="col-head"><span class="label">' + c.name + '</span><span class="tag">' + items.length + '</span></div><div class="col-body">' +
         (items.length ? items.map(function (t) {
-          return '<article class="card"><div class="title">' + esc(t.title) + '</div><div class="foot"><span class="tag">' + esc(t.days) + 'd</span>' + (t.system ? '<span class="tag">' + esc(t.system) + '</span>' : '') +
+          var dueSel = STUDIO && (p.milestones || []).length && (c.id === 'todo' || c.id === 'doing') ? '<select class="due-sel" data-due="' + t.id + '" aria-label="Gate for ' + esc(t.title) + '"><option value="">No gate</option>' + p.milestones.map(function (m) { return '<option value="' + m.id + '"' + (t.due === m.id ? ' selected' : '') + '>' + esc(m.name) + '</option>'; }).join('') + '</select>' : '';
+          return '<article class="card"><div class="title">' + esc(t.title) + '</div><div class="foot"><span class="tag">' + esc(t.days) + 'd</span>' + (t.system ? '<span class="tag">' + esc(t.system) + '</span>' : '') + dueSel +
             '<span class="acts">' +
               (ci > 0 ? '<button class="mini" type="button" data-move="' + t.id + '" data-dir="-1" aria-label="Move ' + esc(t.title) + ' to ' + COLS[ci - 1].name + '">' + icon(I.left, 14) + '</button>' : '') +
               (ci < COLS.length - 1 ? '<button class="mini" type="button" data-move="' + t.id + '" data-dir="1" aria-label="Move ' + esc(t.title) + ' to ' + COLS[ci + 1].name + '">' + icon(I.right, 14) + '</button>' : '') +
@@ -1427,6 +1470,7 @@ function viewMemory() {
             '<button class="mini" type="button" data-del-mem="' + m.id + '" aria-label="Delete note">' + icon(I.x, 14) + '</button></div>';
         }).join('') : '<div class="empty">Nothing yet. Add tuning values, playtest findings and rules Veta should always follow on this project.</div>') +
       '</section>' +
+      gatesHtml(p) +
       '<section class="panel" aria-label="Backup" style="padding:16px;display:grid;gap:10px;margin-top:20px">' +
         '<div class="label">Backup</div>' +
         '<div class="note">Everything lives only in this browser. Copy a backup now and then, and paste it back here to restore this project.</div>' +
@@ -1435,6 +1479,26 @@ function viewMemory() {
         '<div><button class="btn ghost sm" type="button" data-act="mem-restore">Restore as new project</button></div>' +
       '</section>' +
     '</div>';
+}
+
+function gatesHtml(p) {
+  var g = gateChecks(p);
+  var lbl = { fits: ['ok', 'Fits'], tight: ['warn', 'Tight'], over: ['bad', 'Over'], past: ['warn', 'Past'] };
+  return '<section class="panel" aria-label="Milestones" style="margin-top:20px">' +
+    '<div style="padding:16px 16px 4px"><div class="label">Milestones</div><div class="note" style="margin-top:4px">Pick a gate for each task on the Task board. Veta counts the days in code and tells the AI the result.</div></div>' +
+    (g.length ? g.map(function (x) {
+      var l = lbl[x.status];
+      return '<div class="gate"><div class="g-main"><b style="font-weight:500">' + esc(x.m.name) + '</b> <span class="note">' + esc(shortDate(parseIso(x.m.date))) + '</span><div class="note" style="margin-top:3px">' +
+        (x.status === 'past' ? 'Date has passed.' : x.cal + ' calendar · ' + x.wd + ' work · ' + x.focus + ' focused days left · ' + x.need + 'd of tasks due (' + x.tasks.length + ')') + '</div></div>' +
+        '<span class="status ' + l[0] + '">' + l[1] + '</span>' +
+        '<button class="mini" type="button" data-del-ms="' + x.m.id + '" aria-label="Delete milestone">' + icon(I.x, 14) + '</button></div>';
+    }).join('') : '<div class="note" style="padding:8px 16px">No milestones yet.</div>') +
+    '<form id="ms-form" class="gate" autocomplete="off" style="border-top:1px solid var(--line)">' +
+      '<input class="input" id="ms-name" maxlength="60" placeholder="e.g. Prototype gate" aria-label="Milestone name" style="flex:2;min-width:140px">' +
+      '<input class="input" id="ms-date" type="date" aria-label="Milestone date" style="flex:1;min-width:140px">' +
+      '<button class="btn sm" type="submit">' + icon(I.plus, 14) + 'Add</button>' +
+    '</form>' +
+  '</section>';
 }
 
 /* ---------- settings ---------- */
@@ -1495,6 +1559,7 @@ document.addEventListener('click', function (e) {
   if (b.dataset.move) { var t = p.tasks.find(function (x) { return x.id === b.dataset.move; }); if (t) { var ci = COLS.findIndex(function (c) { return c.id === t.col; }); t.col = COLS[clamp(ci + Number(b.dataset.dir), 0, COLS.length - 1)].id; save(); renderNav(); viewTasks(); } return; }
   if (b.dataset.delTask) { p.tasks = p.tasks.filter(function (x) { return x.id !== b.dataset.delTask; }); save(); renderNav(); viewTasks(); return; }
   if (b.dataset.delDec) { p.decisions = p.decisions.filter(function (x) { return x.id !== b.dataset.delDec; }); save(); renderNav(); viewDecisions(); return; }
+  if (b.dataset.delMs) { p.milestones = (p.milestones || []).filter(function (x) { return x.id !== b.dataset.delMs; }); p.tasks.forEach(function (t) { if (t.due === b.dataset.delMs) t.due = ''; }); save(); viewMemory(); return; }
   if (b.dataset.delMem) { p.memory = (p.memory || []).filter(function (x) { return x.id !== b.dataset.delMem; }); save(); renderNav(); viewMemory(); return; }
   if (b.dataset.pinMem) { var pm = (p.memory || []).find(function (x) { return x.id === b.dataset.pinMem; }); if (pm) { pm.pin = !pm.pin; save(); viewMemory(); } return; }
   if (b.dataset.memSave) { var cm = p.chat[Number(b.dataset.memSave)]; if (cm && cm.content && !cm.saved) { addMemory(p, 'fact', 'Veta said (' + (cm.agent || 'producer') + '): ' + cm.content.replace(/[*_`#]/g, '').replace(/\s+/g, ' ')); cm.saved = true; save(); renderNav(); viewChat(); toast('Saved to Studio memory. Edit it there if needed.'); } return; }
@@ -1561,6 +1626,7 @@ document.addEventListener('change', function (e) {
     if (wt) wt.disabled = !tt.tasks.length; if (wt && !tt.tasks.length) wt.checked = false;
     return;
   }
+  if (e.target.dataset && e.target.dataset.due) { var p0 = P(), tk = p0.tasks.find(function (x) { return x.id === e.target.dataset.due; }); if (tk) { tk.due = e.target.value || ''; save(); } return; }
   if (e.target.id === 'proj-select') { store.current = e.target.value; ui.confirm = null; ui.scopeResult = null; ui.scopeIdea = ''; save(); renderAll(); }
 });
 
@@ -1583,6 +1649,12 @@ document.addEventListener('submit', function (e) {
     p.decisions.unshift({ id: uid(), at: Date.now(), source: 'Manual', text: text, why: ($('d-why').value || '').trim() });
     save(); renderNav(); viewDecisions(); return;
   }
+  if (f.id === 'ms-form') {
+    var mn = ($('ms-name').value || '').trim(), md0 = $('ms-date').value;
+    if (!mn) { $('ms-name').focus(); return; } if (!parseIso(md0)) { $('ms-date').focus(); return; }
+    if (!Array.isArray(p.milestones)) p.milestones = [];
+    p.milestones.push({ id: uid(), name: mn.slice(0, 60), date: md0 }); save(); viewMemory(); return;
+  }
   if (f.id === 'mem-form') {
     var mt = ($('m-text').value || '').trim(); if (!mt) { $('m-text').focus(); return; }
     addMemory(p, $('m-kind').value, mt); save(); renderNav(); viewMemory(); var mi = $('m-text'); if (mi) mi.focus(); return;
@@ -1600,7 +1672,7 @@ if (!lsGet(STORE_KEY + '-home')) { lsSet(STORE_KEY + '-home', '1'); store.view =
 save();
 
 /* exposed for tests */
-window.__veta = { studio: STUDIO, addMemory: function (k, t, pin) { var m = addMemory(P(), k, t, pin); save(); renderNav(); if (store.view === 'memory') renderView(); return m; }, memoryBlock: function (q) { return memoryBlock(P(), q || ''); }, pickCards: pickCards, cards: function () { return CARDS; }, forecast: forecast, buildGdd: buildGdd, TEMPLATES: TEMPLATES, md: md, parseJson: parseJson, sseDelta: sseDelta, projectContext: projectContext, quickReport: quickReport, quickScope: quickScope, quickTasks: quickTasks };
+window.__veta = { studio: STUDIO, gateChecks: function () { return gateChecks(P()); }, deadlineBlock: function () { return deadlineBlock(P()); }, workDaysUntil: workDaysUntil, addMemory: function (k, t, pin) { var m = addMemory(P(), k, t, pin); save(); renderNav(); if (store.view === 'memory') renderView(); return m; }, memoryBlock: function (q) { return memoryBlock(P(), q || ''); }, pickCards: pickCards, cards: function () { return CARDS; }, forecast: forecast, buildGdd: buildGdd, TEMPLATES: TEMPLATES, md: md, parseJson: parseJson, sseDelta: sseDelta, projectContext: projectContext, quickReport: quickReport, quickScope: quickScope, quickTasks: quickTasks };
 })();
 </script>
 
