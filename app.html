@@ -1020,8 +1020,17 @@ function sendChat(text) {
   ui.busy.chat = true; ui.msg.chat = null; ui.ctl.chat = new AbortController();
   save(); viewChat();
   var system = 'You are Veta, an AI production assistant for indie game developers. In this conversation you act as ' + agent.role + '. ' +
-    'Be direct, specific and practical. Prefer short answers with concrete next steps. Use the project context below and refer to its systems, tasks and decisions by name. ' +
-    'If the developer is about to grow the scope, say so plainly. Reply in the language the developer writes in. Format with short paragraphs, "-" bullet lists and **bold** for key terms. No tables.\n\n' + projectContext(p);
+    'Be direct, specific and practical, like an experienced producer talking to a friend.\n\n' +
+    'RULES:\n' +
+    '- Keep it short: at most about 180 words. Lead with the answer. If you list options, give at most 3, most important first.\n' +
+    '- Use ONLY facts from the project context below (GDD, tasks, decisions, team, release date). Do NOT invent names, bosses, engines, tools, features or numbers that are not there. If you must assume something, label it "Assumption:".\n' +
+    '- Be consistent: never recommend a thing and its opposite in the same answer.\n' +
+    '- When judging scope, weigh art and content workload (characters, levels, animation, writing) as well as code, and say which team member it hits.\n' +
+    '- Day estimates must match the task board. Show simple math when you give a total.\n' +
+    '- Respect logged decisions; do not re-suggest something already cut or parked unless asked.\n' +
+    '- If the developer is about to grow the scope, say so plainly.\n' +
+    '- End with exactly one concrete next step for this week.\n' +
+    '- Reply in the language the developer writes in. Format: short paragraphs, "-" bullets, **bold** for key terms. No tables, no headings longer than 4 words.\n\n' + projectContext(p);
   var msgs = [{ role: 'system', content: system }].concat(history).concat([{ role: 'user', content: text }]);
   aiChat(msgs, function (t) {
     reply.content = t;
@@ -1101,7 +1110,7 @@ function analyzeGdd() {
   if (!provider()) { p.report = quickReport(p); ui.msg.gdd = { text: 'Quick estimate made in your browser. Connect an AI for a full review.' }; save(); return viewGdd(); }
   ui.busy.gdd = true; ui.msg.gdd = null; ui.ctl.gdd = new AbortController(); viewGdd();
   var prompt = [
-    'You are Veta, a game production planner. Review this game design document like an experienced, honest producer. Be specific to THIS game.',
+    'You are Veta, a game production planner. Review this game design document like an experienced, honest producer. Be specific to THIS game. Use only what the GDD says; do not invent names, engines or features. Weigh art and content workload as well as code.',
     '', projectContext(p, { noTasks: true }), '',
     'Reply with only one JSON object in exactly this shape:',
     '{"quality": 7.5, "readiness": 5, "coreLoop": "...", "strengths": ["..."], "risks": ["..."], "missing": ["..."], "riskLevel": "HIGH"}',
@@ -1181,7 +1190,7 @@ function genTasks(mode) {
   }
   ui.confirm = null; ui.busy.tasks = true; ui.msg.tasks = null; ui.ctl.tasks = new AbortController(); viewTasks();
   var prompt = [
-    'You are Veta, a game production planner. Break this game into the tasks for its FIRST PLAYABLE milestone: the smallest build that proves the core loop.',
+    'You are Veta, a game production planner. Break this game into the tasks for its FIRST PLAYABLE milestone: the smallest build that proves the core loop. Include art/content tasks where the GDD needs them, not only code. Do not invent features that are not in the GDD.',
     '', projectContext(p, { noTasks: true }), '',
     'Reply with only one JSON object: {"tasks": [{"title": "...", "days": 4, "system": "..."}]}',
     'Rules: 6 to 12 tasks, in build order. title: a concrete task, under 8 words. days: realistic working days for one developer (whole number). system: the game system it belongs to, 1-2 words. Do not include tasks for features the decisions list parked or cut. Write in the same language as the GDD.'
@@ -1243,7 +1252,7 @@ function checkScope() {
   if (!provider()) { var qr = quickScope(p, idea); ui.scopeResult = qr; ui.msg.scope = null; p.checks.unshift(qr); if (p.checks.length > 30) p.checks.length = 30; save(); return viewScope(); }
   ui.busy.scope = true; ui.msg.scope = null; ui.scopeResult = null; ui.ctl.scope = new AbortController(); viewScope();
   var prompt = [
-    'You are Veta\'s Scope Guard. A game developer wants to add a new feature. Judge it against the project below like a strict but fair producer whose job is protecting the release date.',
+    'You are Veta\'s Scope Guard. A game developer wants to add a new feature. Judge it against the project below like a strict but fair producer whose job is protecting the release date. Count art, animation and content work, not only code. Do not invent facts that are not in the project.',
     '', projectContext(p), '',
     'NEW FEATURE IDEA: ' + idea, '',
     'Reply with only one JSON object: {"verdict": "RISKY", "delayWeeks": 3, "touches": ["..."], "reasoning": "...", "alternative": "..."}',
