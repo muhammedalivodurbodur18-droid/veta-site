@@ -49,7 +49,7 @@ export default async (req, context) => {
   const roles = ['system', 'user', 'assistant'];
   const messages = (Array.isArray(body.messages) ? body.messages : []).slice(-24).map((m) => ({
     role: roles.includes(m && m.role) ? m.role : 'user',
-    content: String((m && m.content) || '').slice(0, 14000)
+    content: String((m && m.content) || '').slice(0, 18000)
   })).filter((m) => m.content);
   if (!messages.length) return err('No messages', 400);
 

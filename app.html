@@ -381,6 +381,21 @@ var VIEWS = [
   { id: 'scope', name: 'Scope Guard', icon: '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/>' },
   { id: 'decisions', name: 'Decision log', icon: '<path d="M4 6h16M4 12h16M4 18h10"/>' }
 ];
+/* Studio mode: private, per-browser tools. Off for visitors; turn on with ?studio=1, off with ?studio=0. */
+var STUDIO_KEY = 'veta-studio';
+(function () {
+  var m = /[?&]studio=([01])/.exec(location.search || '');
+  if (m) { try { if (m[1] === '1') localStorage.setItem(STUDIO_KEY, '1'); else localStorage.removeItem(STUDIO_KEY); } catch (e) {} }
+})();
+var STUDIO = (function () { try { return localStorage.getItem(STUDIO_KEY) === '1'; } catch (e) { return false; } })();
+if (STUDIO) VIEWS.push({ id: 'memory', name: 'Studio memory', icon: '<path d="M12 3a6 6 0 0 0-6 6c0 2.4 1.3 3.8 2.3 4.9.7.8 1.2 1.6 1.2 2.6V18h5v-1.5c0-1 .5-1.8 1.2-2.6C16.7 12.8 18 11.4 18 9a6 6 0 0 0-6-6z"/><path d="M10 21h4"/>' });
+var MEM_KINDS = [
+  { id: 'fact', name: 'Fact' },
+  { id: 'number', name: 'Number' },
+  { id: 'playtest', name: 'Playtest' },
+  { id: 'rule', name: 'Rule' }
+];
+var MEM_BUDGET = 2600;
 
 /* ---------- utils ---------- */
 function $(id) { return document.getElementById(id); }
@@ -499,7 +514,7 @@ var saveTimer = null;
 function save() { lsSet(STORE_KEY, JSON.stringify(store)); }
 function saveSoon() { clearTimeout(saveTimer); saveTimer = setTimeout(save, 400); }
 function P() { return store.projects.find(function (p) { return p.id === store.current; }) || store.projects[0]; }
-store.projects.forEach(function (p) { if (!parseIso(p.release)) p.release = plusMonths(p.months || 12); });
+store.projects.forEach(function (p) { if (!parseIso(p.release)) p.release = plusMonths(p.months || 12); if (!Array.isArray(p.memory)) p.memory = []; });
 
 var ui = { busy: {}, ctl: {}, msg: {}, confirm: null, scopeResult: null, scopeIdea: '' };
 
@@ -650,7 +665,52 @@ function projectContext(p, opts) {
     parts.push('TASK BOARD: ' + p.tasks.length + ' tasks. Open: ' + (open.length ? open.slice(0, 15).map(function (t) { return t.title + ' (' + t.days + 'd, ' + t.col + ')'; }).join('; ') : 'none') + '. Parked for post-launch: ' + (p.tasks.filter(function (t) { return t.col === 'backlog'; }).map(function (t) { return t.title; }).join('; ') || 'none') + '.');
   }
   parts.push('DECISIONS ALREADY MADE:\n' + (p.decisions.length ? p.decisions.slice(0, 20).map(function (d) { return '- ' + d.text + (d.why ? ' (why: ' + d.why + ')' : ''); }).join('\n') : '(none yet)'));
+  var mem = memoryBlock(p, opts.q || '');
+  if (mem) parts.push(mem);
   return parts.join('\n\n');
+}
+
+/* ---------- studio memory (private, this browser only) ---------- */
+function memWords(t) { return lowerTr(t).split(/[^a-z0-9çğıöşü.]+/).filter(function (w) { return w.length >= 4; }); }
+function pickMemory(p, q) {
+  var items = (p.memory || []).slice();
+  if (!items.length) return [];
+  var qw = memWords(q);
+  var scored = items.map(function (m, i) {
+    var mw = memWords(m.text), hit = 0;
+    qw.forEach(function (w) { if (mw.some(function (x) { return x.indexOf(w) === 0 || w.indexOf(x) === 0; })) hit++; });
+    return { m: m, s: (m.pin ? 1000 : 0) + hit * 10 + (m.kind === 'rule' || m.kind === 'number' ? 2 : 0) - i * 0.01 };
+  }).sort(function (a, b) { return b.s - a.s; });
+  var out = [], used = 0;
+  scored.forEach(function (o) {
+    var len = o.m.text.length + 30;
+    if (used + len > MEM_BUDGET) return;
+    used += len; out.push(o.m);
+  });
+  return out;
+}
+function memoryBlock(p, q) {
+  if (!STUDIO) return '';
+  var picked = pickMemory(p, q);
+  if (!picked.length) return '';
+  return 'STUDIO MEMORY (the developer\'s own confirmed notes. Treat them as true. They are newer than the GDD and win when the two disagree. "Number" notes are real tuning values or measurements: reason with them exactly. "Rule" notes are instructions for how you answer on this project):\n' +
+    picked.map(function (m) { return '- [' + m.kind + (m.at ? ', ' + isoDate(new Date(m.at)) : '') + '] ' + m.text; }).join('\n');
+}
+function addMemory(p, kind, text, pin) {
+  text = String(text || '').trim().slice(0, 600);
+  if (!text) return null;
+  if (!Array.isArray(p.memory)) p.memory = [];
+  var m = { id: uid(), at: Date.now(), kind: MEM_KINDS.some(function (k) { return k.id === kind; }) ? kind : 'fact', text: text, pin: !!pin };
+  p.memory.unshift(m);
+  if (p.memory.length > 200) p.memory = p.memory.slice(0, 200);
+  return m;
+}
+function memCommand(text) {
+  var m = /^\/(not|note|remember|hatırla|hatirla)(?:\s+(fact|number|playtest|rule|sayı|sayi|kural|test))?\s+([\s\S]+)$/i.exec(text);
+  if (!m) return null;
+  var map = { 'sayı': 'number', 'sayi': 'number', 'kural': 'rule', 'test': 'playtest' };
+  var k = (m[2] || 'fact').toLowerCase();
+  return { kind: map[k] || k, text: m[3] };
 }
 
 /* ---------- genre templates ---------- */
@@ -975,7 +1035,7 @@ function renderProjects() {
 }
 function renderNav() {
   var p = P();
-  var counts = { tasks: p.tasks.filter(function (t) { return t.col !== 'done' && t.col !== 'backlog'; }).length, decisions: p.decisions.length };
+  var counts = { tasks: p.tasks.filter(function (t) { return t.col !== 'done' && t.col !== 'backlog'; }).length, decisions: p.decisions.length, memory: (p.memory || []).length };
   $('nav').innerHTML = VIEWS.map(function (v) {
     return '<button type="button" data-view="' + v.id + '"' + (store.view === v.id ? ' aria-current="page"' : '') + '>' + icon(v.icon) + '<span>' + v.name + '</span>' + (counts[v.id] != null ? '<span class="count">' + counts[v.id] + '</span>' : '') + '</button>';
   }).join('');
@@ -997,6 +1057,7 @@ function renderView() {
   if (v === 'scope') return viewScope();
   if (v === 'decisions') return viewDecisions();
   if (v === 'home') return viewHome();
+  if (v === 'memory' && STUDIO) return viewMemory();
   return viewChat();
 }
 function msgLine(key) { var m = ui.msg[key]; return m ? '<div class="msg' + (m.err ? ' err' : '') + '" role="status">' + esc(m.text) + '</div>' : ''; }
@@ -1028,12 +1089,20 @@ function msgHtml(m, i) {
   var who = m.role === 'user' ? 'You' : (a ? a.name : 'Veta');
   var body = m.role === 'user' ? '<p>' + esc(m.content).replace(/\n/g, '<br>') + '</p>' : (m.content ? md(m.content) : '<span class="thinking">Thinking…</span>');
   var cardsLine = m.role !== 'user' && m.cards && m.cards.length && m.content ? '<div class="note" style="margin-top:8px;font-size:12px">Veta guidance used: ' + m.cards.map(esc).join(' · ') + '</div>' : '';
-  return '<div class="m ' + m.role + '"><div class="who" aria-hidden="true">' + (m.role === 'user' ? 'YOU' : 'V') + '</div><div class="body"><div class="meta">' + esc(who) + '</div><div id="mb-' + i + '">' + body + '</div>' + cardsLine + '</div></div>';
+  var memBtn = STUDIO && m.role !== 'user' && m.content && !ui.busy.chat ? '<div style="margin-top:8px"><button class="btn ghost sm" type="button" data-mem-save="' + i + '">' + (m.saved ? 'Saved to memory' : 'Save to memory') + '</button></div>' : '';
+  return '<div class="m ' + m.role + '"><div class="who" aria-hidden="true">' + (m.role === 'user' ? 'YOU' : 'V') + '</div><div class="body"><div class="meta">' + esc(who) + '</div><div id="mb-' + i + '">' + body + '</div>' + cardsLine + memBtn + '</div></div>';
 }
 function sendChat(text) {
   var p = P();
   text = String(text || '').trim();
   if (!text || ui.busy.chat) return;
+  var cmd = STUDIO ? memCommand(text) : null;
+  if (cmd) {
+    addMemory(p, cmd.kind, cmd.text);
+    save(); renderNav(); viewChat();
+    toast('Saved to Studio memory as ' + cmd.kind + '.');
+    return;
+  }
   if (!provider()) { ui.msg.chat = { err: true, text: errText({ code: 'nokey' }) }; viewChat(); openSettings(); return; }
   var agent = AGENTS.find(function (a) { return a.id === (store.agent || 'producer'); });
   var history = p.chat.slice(-12).map(function (m) { return { role: m.role, content: m.content }; }).filter(function (m) { return m.content; });
@@ -1059,7 +1128,9 @@ function sendChat(text) {
     '- Separate cheap work (tuning, post-processing, camera, logic written with AI help) from expensive work (new assets, levels, animation, writing, audio) before recommending cuts.\n' +
     '- If the developer is about to grow the scope, say so plainly.\n' +
     '- End with exactly one concrete next step for this week.\n' +
-    '- Reply in the language the developer writes in. Format: short paragraphs, "-" bullets, **bold** for key terms. No tables, no headings longer than 4 words.\n\n' + projectContext(p);
+    '- Reply in the language the developer writes in. Format: short paragraphs, "-" bullets, **bold** for key terms. No tables, no headings longer than 4 words.\n' +
+    (STUDIO && (p.memory || []).length ? '- STUDIO MEMORY below holds the developer\'s confirmed facts, numbers and playtest notes. Prefer them over the GDD, quote their numbers exactly, and follow its "rule" notes.\n' : '') +
+    '\n' + projectContext(p, { q: text, gddMax: STUDIO ? 5000 : 6000 });
   var used = pickCards(text, p.gdd, 3);
   reply.cards = used.map(function (c) { return c.title; });
   system += cardsBlock(used);
@@ -1285,7 +1356,7 @@ function checkScope() {
   ui.busy.scope = true; ui.msg.scope = null; ui.scopeResult = null; ui.ctl.scope = new AbortController(); viewScope();
   var prompt = [
     'You are Veta\'s Scope Guard. A game developer wants to add a new feature. Judge it against the project below like a strict but fair producer whose job is protecting the release date. Count art, animation and content work, not only code. Do not invent facts that are not in the project.',
-    '', projectContext(p), '',
+    '', projectContext(p, { q: idea }), '',
     'NEW FEATURE IDEA: ' + idea, cardsBlock(pickCards(idea, p.gdd, 2)), '',
     'Reply with only one JSON object: {"verdict": "RISKY", "delayWeeks": 3, "touches": ["..."], "reasoning": "...", "alternative": "..."}',
     'Rules:',
@@ -1332,6 +1403,36 @@ function viewDecisions() {
           return '<div class="dec-item"><div class="d-main"><div class="d-text">' + esc(d.text) + '</div>' + (d.why ? '<div class="d-why">' + esc(d.why) + '</div>' : '') + '<div class="d-meta">' + esc(d.source || 'Manual') + ' · ' + esc(fmtDate(d.at)) + '</div></div>' +
             '<button class="mini" type="button" data-del-dec="' + d.id + '" aria-label="Delete decision">' + icon(I.x, 14) + '</button></div>';
         }).join('') : '<div class="empty">No decisions yet. Log them here, or let Scope Guard log them for you.</div>') +
+      '</section>' +
+    '</div>';
+}
+
+/* ---------- studio memory view ---------- */
+function viewMemory() {
+  var p = P(); var mem = p.memory || [];
+  var used = pickMemory(p, '').length;
+  topbar('Studio memory', 'Private to this browser · Veta reads it in every answer', '<span class="chip">Private</span>');
+  $('view').innerHTML =
+    '<div class="dec">' +
+      '<form class="panel" id="mem-form" style="padding:16px;display:grid;gap:12px;margin-bottom:20px" autocomplete="off">' +
+        field('m-kind', 'Type', '<select class="select" id="m-kind">' + MEM_KINDS.map(function (k) { return '<option value="' + k.id + '">' + k.name + '</option>'; }).join('') + '</select>') +
+        field('m-text', 'What should Veta remember?', '<textarea class="input" id="m-text" rows="3" maxlength="600" placeholder="e.g. Rage gain = 4 x (fall / 3m)^1.6. A 15 m fall adds about 52 rage."></textarea>') +
+        '<div class="row" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn" type="submit">' + icon(I.plus, 14) + 'Remember</button><span class="note">In chat you can also type <b>/not</b>, <b>/not sayı</b>, <b>/not test</b> or <b>/not kural</b> followed by the note.</span></div>' +
+      '</form>' +
+      '<div class="note" style="margin:0 0 10px">' + mem.length + ' notes · ' + used + ' fit in a general answer (pinned first, then the most relevant to each question).</div>' +
+      '<section class="panel" aria-label="Memory">' +
+        (mem.length ? mem.map(function (m) {
+          return '<div class="dec-item"><div class="d-main"><div class="d-text" style="font-weight:400;white-space:pre-wrap">' + esc(m.text) + '</div><div class="d-meta">' + esc((MEM_KINDS.find(function (k) { return k.id === m.kind; }) || MEM_KINDS[0]).name) + (m.pin ? ' · Pinned' : '') + ' · ' + esc(fmtDate(m.at)) + '</div></div>' +
+            '<button class="btn ghost sm" type="button" data-pin-mem="' + m.id + '" aria-pressed="' + !!m.pin + '">' + (m.pin ? 'Unpin' : 'Pin') + '</button>' +
+            '<button class="mini" type="button" data-del-mem="' + m.id + '" aria-label="Delete note">' + icon(I.x, 14) + '</button></div>';
+        }).join('') : '<div class="empty">Nothing yet. Add tuning values, playtest findings and rules Veta should always follow on this project.</div>') +
+      '</section>' +
+      '<section class="panel" aria-label="Backup" style="padding:16px;display:grid;gap:10px;margin-top:20px">' +
+        '<div class="label">Backup</div>' +
+        '<div class="note">Everything lives only in this browser. Copy a backup now and then, and paste it back here to restore this project.</div>' +
+        '<div class="row" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" type="button" data-act="mem-copy">Copy project backup</button></div>' +
+        '<textarea class="input" id="m-restore" rows="3" placeholder="Paste a backup here to restore it as a new project"></textarea>' +
+        '<div><button class="btn ghost sm" type="button" data-act="mem-restore">Restore as new project</button></div>' +
       '</section>' +
     '</div>';
 }
@@ -1394,6 +1495,9 @@ document.addEventListener('click', function (e) {
   if (b.dataset.move) { var t = p.tasks.find(function (x) { return x.id === b.dataset.move; }); if (t) { var ci = COLS.findIndex(function (c) { return c.id === t.col; }); t.col = COLS[clamp(ci + Number(b.dataset.dir), 0, COLS.length - 1)].id; save(); renderNav(); viewTasks(); } return; }
   if (b.dataset.delTask) { p.tasks = p.tasks.filter(function (x) { return x.id !== b.dataset.delTask; }); save(); renderNav(); viewTasks(); return; }
   if (b.dataset.delDec) { p.decisions = p.decisions.filter(function (x) { return x.id !== b.dataset.delDec; }); save(); renderNav(); viewDecisions(); return; }
+  if (b.dataset.delMem) { p.memory = (p.memory || []).filter(function (x) { return x.id !== b.dataset.delMem; }); save(); renderNav(); viewMemory(); return; }
+  if (b.dataset.pinMem) { var pm = (p.memory || []).find(function (x) { return x.id === b.dataset.pinMem; }); if (pm) { pm.pin = !pm.pin; save(); viewMemory(); } return; }
+  if (b.dataset.memSave) { var cm = p.chat[Number(b.dataset.memSave)]; if (cm && cm.content && !cm.saved) { addMemory(p, 'fact', 'Veta said (' + (cm.agent || 'producer') + '): ' + cm.content.replace(/[*_`#]/g, '').replace(/\s+/g, ' ')); cm.saved = true; save(); renderNav(); viewChat(); toast('Saved to Studio memory. Edit it there if needed.'); } return; }
   if (b.dataset.check) { var c = p.checks.find(function (x) { return x.id === b.dataset.check; }); if (c) { ui.scopeResult = c; ui.scopeIdea = c.idea; viewScope(); } return; }
   var a = b.dataset.act;
   if (!a) return;
@@ -1404,6 +1508,20 @@ document.addEventListener('click', function (e) {
   if (a === 'open-settings') return openSettings();
   if (a === 'wizard') return openWizard();
   if (a === 'export') return exportMd();
+  if (a === 'mem-copy') {
+    var dump = JSON.stringify({ veta: 'project-backup', v: 1, at: Date.now(), project: p });
+    var done = function () { toast('Backup copied (' + Math.round(dump.length / 1024) + ' KB). Paste it somewhere safe.'); };
+    try { navigator.clipboard.writeText(dump).then(done, function () { var r = $('m-restore'); if (r) { r.value = dump; r.select(); } toast('Copy blocked. The backup is selected in the box below.'); }); } catch (err) { var r2 = $('m-restore'); if (r2) { r2.value = dump; r2.select(); } }
+    return;
+  }
+  if (a === 'mem-restore') {
+    var raw = ($('m-restore') || {}).value || '';
+    var j = null; try { j = JSON.parse(raw); } catch (err) {}
+    var np = j && j.veta === 'project-backup' && j.project;
+    if (!np || !Array.isArray(np.tasks)) { toast('That does not look like a Veta backup.'); return; }
+    np.id = uid(); np.name = (np.name || 'Restored game') + ' (restored)'; if (!Array.isArray(np.memory)) np.memory = []; np.chat = np.chat || []; np.decisions = np.decisions || []; np.checks = np.checks || [];
+    store.projects.push(np); store.current = np.id; save(); renderAll(); toast('Backup restored as a new project.'); return;
+  }
   if (a === 'gen-tasks') return genTasks();
   if (a === 'gen-add') return genTasks('add');
   if (a === 'gen-replace') return genTasks('replace');
@@ -1465,6 +1583,10 @@ document.addEventListener('submit', function (e) {
     p.decisions.unshift({ id: uid(), at: Date.now(), source: 'Manual', text: text, why: ($('d-why').value || '').trim() });
     save(); renderNav(); viewDecisions(); return;
   }
+  if (f.id === 'mem-form') {
+    var mt = ($('m-text').value || '').trim(); if (!mt) { $('m-text').focus(); return; }
+    addMemory(p, $('m-kind').value, mt); save(); renderNav(); viewMemory(); var mi = $('m-text'); if (mi) mi.focus(); return;
+  }
   if (f.id === 'scope-form') { checkScope(); return; }
   if (f.id === 'wiz-form') { wizardCreate(); return; }
 });
@@ -1478,7 +1600,7 @@ if (!lsGet(STORE_KEY + '-home')) { lsSet(STORE_KEY + '-home', '1'); store.view =
 save();
 
 /* exposed for tests */
-window.__veta = { pickCards: pickCards, cards: function () { return CARDS; }, forecast: forecast, buildGdd: buildGdd, TEMPLATES: TEMPLATES, md: md, parseJson: parseJson, sseDelta: sseDelta, projectContext: projectContext, quickReport: quickReport, quickScope: quickScope, quickTasks: quickTasks };
+window.__veta = { studio: STUDIO, addMemory: function (k, t, pin) { var m = addMemory(P(), k, t, pin); save(); renderNav(); if (store.view === 'memory') renderView(); return m; }, memoryBlock: function (q) { return memoryBlock(P(), q || ''); }, pickCards: pickCards, cards: function () { return CARDS; }, forecast: forecast, buildGdd: buildGdd, TEMPLATES: TEMPLATES, md: md, parseJson: parseJson, sseDelta: sseDelta, projectContext: projectContext, quickReport: quickReport, quickScope: quickScope, quickTasks: quickTasks };
 })();
 </script>
 
