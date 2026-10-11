@@ -566,6 +566,18 @@ Early access opens before the 2027 launch
 <!--/PRERENDER--></div>
 <script>
 const ENDPOINT = 'https://formspree.io/f/mqpebzlq';
+// Where did this visitor come from? Links like /?ref=instagram or /?ref=x-thread are remembered for the visit
+// and sent with the waitlist email, so the Formspree inbox shows which channel actually brings sign-ups.
+function sourceTag() {
+  try {
+    const p = new URLSearchParams(location.search);
+    const r = (p.get('ref') || p.get('utm_source') || '').replace(/[^a-z0-9_-]/gi, '').slice(0, 40);
+    if (r) sessionStorage.setItem('veta-ref', r);
+    const kept = sessionStorage.getItem('veta-ref');
+    return 'veta-landing' + (kept ? ':' + kept : '');
+  } catch (_) { return 'veta-landing'; }
+}
+sourceTag();
 const SAMPLES = [
   { chip: 'Co-op roguelike', idea: 'A 4-player co-op roguelike with crafting and online play. Team of 2, 12 months.' },
   { chip: 'Cozy farming sim', idea: 'A cozy farming sim with seasons, villagers and gifting. Solo developer, 9 months.' },
@@ -1364,12 +1376,12 @@ document.addEventListener('submit', async e => {
   const nativePost = () => {
     const f = document.createElement('form');
     f.method = 'POST'; f.action = ENDPOINT; f.dataset.native = '1'; f.style.display = 'none';
-    [['email', email], ['source', 'veta-landing']].forEach(([k, v]) => { const i = document.createElement('input'); i.type = 'hidden'; i.name = k; i.value = v; f.appendChild(i); });
+    [['email', email], ['source', sourceTag()]].forEach(([k, v]) => { const i = document.createElement('input'); i.type = 'hidden'; i.name = k; i.value = v; f.appendChild(i); });
     document.body.appendChild(f); f.submit();
   };
   say('Sending...', '#A59FBB');
   try {
-    const res = await fetch(ENDPOINT, { method: 'POST', headers: { 'Accept': 'application/json' }, body: new URLSearchParams({ email, source: 'veta-landing' }) });
+    const res = await fetch(ENDPOINT, { method: 'POST', headers: { 'Accept': 'application/json' }, body: new URLSearchParams({ email, source: sourceTag() }) });
     if (res.ok) { say("You're on the list. We'll email you when Veta opens.", '#9BE7B5', true); return; }
     let detail = '';
     try { const j = await res.json(); detail = (j.errors && j.errors.map(x => x.message).join(' ')) || j.error || ''; } catch (_) {}
