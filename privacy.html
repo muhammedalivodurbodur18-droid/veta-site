@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy — Veta</title>
+<meta name="description" content="What Veta collects, who processes it, and how to have it deleted.">
+<link rel="canonical" href="https://veta-site.netlify.app/privacy.html">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/fonts/fonts.css">
+<style>
+body{margin:0;background:#09080D;color:#C9C6D4;font-family:'Geist',system-ui,sans-serif;line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
+main{max-width:720px;margin:0 auto;padding:56px 24px 96px;box-sizing:border-box}
+a{color:#EEEDF2;text-decoration:underline;text-underline-offset:3px}
+h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:40px;line-height:1.1;letter-spacing:-1px;color:#fff;margin:24px 0 8px}
+h2{font-weight:600;font-size:19px;color:#fff;margin:36px 0 8px}
+p,li{margin:0 0 12px}
+ul{padding-left:20px;margin:0 0 12px}
+.meta{font-family:'Geist Mono',monospace;font-size:12px;letter-spacing:1px;color:#8E8A9B}
+.back{font-size:14px}
+table{border-collapse:collapse;width:100%;font-size:14px;margin:8px 0 16px}
+th,td{border:1px solid #2A2540;padding:8px 10px;text-align:left;vertical-align:top}
+th{color:#fff;font-weight:500;background:#13111B}
+.tr{margin-top:56px;padding-top:8px;border-top:1px solid #2A2540}
+@media (max-width:520px){h1{font-size:32px}table{display:block;overflow-x:auto}}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="/">← Back to Veta</a>
+<h1>Privacy</h1>
+<div class="meta">LAST UPDATED 29 OCTOBER 2026</div>
+
+<p>Veta is a small project run by an individual developer based in Istanbul, Türkiye. This page explains, in plain words, what the site and the demo app collect, who processes it, and how to have it removed. A short Turkish version follows below.</p>
+
+<h2>What we collect</h2>
+<ul>
+<li><strong>Waitlist.</strong> The email address you type into the waitlist form, plus a short "source" tag (for example <code>?ref=reddit</code>) that tells us which link brought you here. We use it only to email you about Veta early access and launch.</li>
+<li><strong>Demo AI.</strong> If you use the AI in the demo app, the text you type (project notes, tasks, questions) is sent to our server function and from there to the AI provider to produce an answer. Please do not type personal or confidential information.</li>
+<li><strong>Your demo projects.</strong> Projects, tasks and notes you create in the demo app are stored only in your own browser (local storage). We never receive them. If you paste your own Groq API key, it also stays only in your browser.</li>
+</ul>
+<p>This site uses no analytics or advertising trackers and sets no cookies of its own, and it loads its fonts from its own server, not from Google.</p>
+
+<h2>Who processes it</h2>
+<table>
+<tr><th>Service</th><th>What for</th><th>Data</th></tr>
+<tr><td>Formspree</td><td>Receives waitlist sign-ups</td><td>Email address, source tag</td></tr>
+<tr><td>Netlify</td><td>Hosts the site and runs the AI function</td><td>Standard request logs (such as IP address); the function keeps your IP in memory only to apply an hourly rate limit</td></tr>
+<tr><td>Groq</td><td>Generates the demo AI answers</td><td>The text you send to the demo AI</td></tr>
+</table>
+<p>These providers operate servers outside Türkiye, so using the waitlist or the demo AI means your data is transferred abroad. Each provider handles data under its own privacy policy.</p>
+
+<h2>Why and for how long</h2>
+<p>We process your email because you gave it to us by joining the waitlist (your consent). We keep it until Veta launches and for a reasonable time afterwards, or until you ask us to delete it. Demo AI text is not saved by us.</p>
+
+<h2>Your rights</h2>
+<p>You can ask us to tell you what we hold about you, correct it, delete it, or stop emailing you. Every launch or early-access email will include a way to unsubscribe. These rights come from the Turkish Personal Data Protection Law (KVKK, Law No. 6698), and if you are in the EU, from the GDPR.</p>
+
+<h2>Contact</h2>
+<p>To request deletion or ask a question, open an issue or message us on GitHub: <a href="https://github.com/muhammedalivodurbodur18-droid">github.com/muhammedalivodurbodur18-droid</a>. Please mention the email address you signed up with.</p>
+
+<h2>Changes</h2>
+<p>If this changes in a meaningful way (for example when paid plans start), we will update this page and the date above.</p>
+
+<section class="tr" lang="tr">
+<h2>Türkçe özet (KVKK aydınlatma)</h2>
+<p><strong>Ne topluyoruz?</strong> Bekleme listesi formuna yazdığınız e-posta adresi ve hangi bağlantıdan geldiğinizi gösteren kısa bir kaynak etiketi. Demo uygulamadaki yapay zekâyı kullanırsanız yazdığınız metin de yapay zekâ sağlayıcısına iletilir. Demo projeleriniz yalnızca kendi tarayıcınızda saklanır, bize ulaşmaz.</p>
+<p><strong>Amaç ve hukuki sebep:</strong> E-postanızı yalnızca Veta erken erişim ve lansman duyurusu için kullanırız. Dayanak, bekleme listesine katılarak verdiğiniz açık rızadır.</p>
+<p><strong>Kimler işliyor, yurt dışına aktarım:</strong> Formspree (kayıtlar), Netlify (barındırma) ve Groq (demo yapay zekâ). Bu hizmetlerin sunucuları yurt dışındadır; formu doldurarak veya demo yapay zekâyı kullanarak verinizin yurt dışına aktarılmasını kabul etmiş olursunuz.</p>
+<p><strong>Haklarınız:</strong> KVKK madde 11 kapsamında verinizin işlenip işlenmediğini öğrenme, düzeltme, silme ve e-posta almayı durdurma talep edebilirsiniz. Başvuru için yukarıdaki GitHub adresinden bize ulaşın, kayıt olduğunuz e-posta adresini belirtin. Her duyuru e-postasında abonelikten çıkma bağlantısı da olacaktır.</p>
+</section>
+</main>
+</body>
+</html>
